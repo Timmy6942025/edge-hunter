@@ -1,12 +1,51 @@
 ---
 name: professional-quant
-description: Professional quantitative trading skill for stock price prediction, strategy backtesting, portfolio optimization, and risk management using free open-source tools with no API keys. Use when the user requests: (1) Stock price forecasting/prediction, (2) Trading strategy development or backtesting, (3) Portfolio optimization, (4) Risk analysis or management, (5) Alpha signal generation, (6) Investment analysis, (7) Market timing decisions, or any quant trading tasks involving equities. Deliver decisive, actionable analysis. ALWAYS uses current date from system (datetime.now()) - never hallucinates dates.
+description: Professional quantitative trading skill for stock price prediction, strategy backtesting, portfolio optimization, and risk management using free open-source tools with no API keys. Use when the user requests: (1) Stock price forecasting/prediction, (2) Trading strategy development or backtesting, (3) Portfolio optimization, (4) Risk analysis or management, (5) Alpha signal generation, (6) Investment analysis, (7) Market timing decisions, or any quant trading tasks involving equities. Deliver decisive, actionable analysis. ALWAYS uses current date from system (datetime.now()) - never hallucinates dates. ALL scripts use STRICT QUANT RULES - no look-ahead bias, mandatory friction (fees + slippage), correct compounding math, sanity check tripwires.
 ---
 
 # Professional Quant
 
 ## Overview
 Enables AI agents to act as decisive professional quantitative analysts/traders. Provides deep, comprehensive analysis with clear convictions. No cowardly disclaimers—deliver analytical conclusions based on data. Supports end-to-end quant workflows from data acquisition to strategy execution.
+
+## Strict Quant Rules (MANDATORY)
+
+ALL scripts follow professional-grade standards:
+
+### 1. NO Look-Ahead Bias (The Shift Rule)
+- Scripts calculate signals on Close prices, but execute trades on NEXT day's Open
+- All signal dataframes use `.shift(1)` before applying position logic
+- The agent CANNOT trade on data from the same timestamp it was generated
+- **Implemented in**: `backtest.py` (all 3 strategies use `position.shift(1)`)
+
+### 2. Mandatory Friction (Fees & Slippage)
+- **Exchange Fee**: 0.1% (0.001) per transaction (BOTH entry and exit)
+- **Slippage**: 0.05% (0.0005) per trade
+- Total round-trip friction: 0.3% per trade
+- **Implemented in**: `backtest.py` (`apply_friction()` function)
+
+### 3. Correct Math (No Fake Compounding)
+- Uses log returns OR fractional compounding: `(1 + returns).cumprod()`
+- NO raw cumulative sum (which allows infinite leverage)
+- Max position sizing CAPPED at 1x leverage (unless explicitly testing futures)
+- **Implemented in**: `backtest.py` (`calculate_log_returns()` function)
+
+### 4. Sanity Check Tripwires
+- If backtest calculates **Win Rate >80%**: Append "WARNING: Statistically improbable"
+- If **Sharpe Ratio >3.5**: Append "WARNING: Extremely rare in real markets"
+- If **ROI >5000%** over <5 years: Append "WARNING: Impossible without extreme leverage"
+- **Implemented in**: `backtest.py` (sanity check section)
+
+### 5. Baseline Benchmark (Alpha Calculation)
+- ALL backtests return "Buy & Hold" return over the SAME time period
+- Script MUST output alpha (strategy return - buy&hold return)
+- If alpha is negative, strategy is WORSE than passive indexing
+- **Implemented in**: `backtest.py` (baseline comparison table)
+
+### 6. Current Date Usage
+- ALL scripts use `datetime.now()` (never hardcoded dates)
+- `master_analysis.py` prints `CURRENT DATE: YYYY-MM-DD` at start
+- **NO date hallucination** - agents use real system date
 
 ## MANDATORY Thinking Process (NON-NEGOTIABLE)
 

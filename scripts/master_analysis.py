@@ -1,18 +1,195 @@
 #!/usr/bin/env python3
 """
-Master Quantitative Analysis - The "Insane" Analysis
-Combines ALL signals into one decisive investment thesis with deep reasoning
+Master Quantitative Analysis - Orchestrator
+Runs ALL scripts and outputs structured data for AI synthesis.
+NO fake recommendations - just raw data for the AI to analyze.
 """
 import subprocess
 import sys
 import re
-import yfinance as yf
-import pandas as pd
 import argparse
+from datetime import datetime
 
-def get_earnings_context(ticker):
-    """Get earnings info for context (free from yfinance)"""
+def run_master_analysis(ticker):
+    from datetime import datetime
+    today = datetime.now().strftime('%Y-%m-%d')
+    
+    print(f"\n{'#'*80}")
+    print(f"# MASTER QUANTITATIVE ANALYSIS: {ticker}")
+    print(f"# CURRENT DATE: {today}")
+    print(f"# DEEP THINKING PROTOCOL ACTIVATED")
+    print(f"# NO FAKE RECOMMENDATIONS - DATA ONLY")
+    print(f"{'#'*80}")
+    
+    results = {}
+    
+    # ==========================================================================
+    # 1. Run forecast.py (Prophet + technical indicators)
+    # ==========================================================================
+    print(f"\n[1/8] Running forecast & technical indicators...")
     try:
+        result = subprocess.run(
+            [sys.executable, "forecast.py", ticker],
+            capture_output=True, text=True, cwd="."
+        )
+        print(result.stdout)
+        
+        # Parse NEW output format from forecast.py
+        # Extract prophet_change_pct
+        change_match = re.search(r'prophet_change_pct: ([-+]?\d+\.\d+)', result.stdout)
+        if change_match:
+            results['prophet_change'] = float(change_match.group(1))
+        
+        # Extract RSI
+        rsi_match = re.search(r'rsi: ([\d.]+)', result.stdout)
+        if rsi_match:
+            results['rsi'] = float(rsi_match.group(1))
+        
+        # Extract trend
+        trend_match = re.search(r'trend: (\w+)', result.stdout)
+        if trend_match:
+            results['trend'] = trend_match.group(1)
+        
+        # Extract uncertainty
+        uncertainty_match = re.search(r'uncertainty_range_pct: ([\d.]+)', result.stdout)
+        if uncertainty_match:
+            results['uncertainty'] = float(uncertainty_match.group(1))
+        
+        # Set forecast signal based on data (not fake recommendation)
+        if results.get('prophet_change', 0) > 0 and results.get('rsi', 50) < 70:
+            results['forecast_signal'] = 'BULLISH'
+        elif results.get('prophet_change', 0) < 0 and results.get('rsi', 50) > 30:
+            results['forecast_signal'] = 'BEARISH'
+        else:
+            results['forecast_signal'] = 'NEUTRAL'
+        
+    except Exception as e:
+        print(f"Forecast error: {e}")
+        results['forecast_signal'] = 'ERROR'
+    
+    # ==========================================================================
+    # 2. Run backtest.py (STRICT quant rules applied)
+    # ==========================================================================
+    print(f"\n[2/8] Running backtest (NO look-ahead, with friction)...")
+    try:
+        result = subprocess.run(
+            [sys.executable, "backtest.py", ticker],
+            capture_output=True, text=True, cwd="."
+        )
+        print(result.stdout)
+        
+        # Parse backtest conviction
+        if "CONVICTION: STRONG BUY" in result.stdout:
+            results['backtest'] = 'STRONG BUY'
+        elif "CONVICTION: BUY" in result.stdout:
+            results['backtest'] = 'BUY'
+        elif "CONVICTION: STRONG SELL" in result.stdout:
+            results['backtest'] = 'STRONG SELL'
+        else:
+            results['backtest'] = 'SELL'
+        
+        # Parse alpha vs buy & hold
+        alpha_match = re.search(r'Alpha Generated: ([+-]?\d+\.\d+)%', result.stdout)
+        if alpha_match:
+            results['alpha_vs_buy_hold'] = float(alpha_match.group(1))
+        
+        # Parse Sharpe
+        sharpe_match = re.search(r'Sharpe: ([\d.]+)', result.stdout)
+        if sharpe_match:
+            results['backtest_sharpe'] = float(sharpe_match.group(1))
+        
+    except Exception as e:
+        print(f"Backtest error: {e}")
+        results['backtest'] = 'ERROR'
+    
+    # ==========================================================================
+    # 3. Run risk_metrics.py
+    # ==========================================================================
+    print(f"\n[3/8] Calculating comprehensive risk metrics...")
+    try:
+        result = subprocess.run(
+            [sys.executable, "risk_metrics.py", ticker],
+            capture_output=True, text=True, cwd="."
+        )
+        print(result.stdout)
+        
+        if "RISK RATING:" in result.stdout:
+            match = re.search(r'RISK RATING: (.+)', result.stdout)
+            if match:
+                results['risk'] = match.group(1)
+        
+        # Parse Sharpe
+        sharpe_match = re.search(r'Sharpe Ratio: ([\d.]+)', result.stdout)
+        if sharpe_match:
+            results['sharpe'] = float(sharpe_match.group(1))
+        
+        # Parse max drawdown
+        dd_match = re.search(r'Max Drawdown: ([\d.-]+)%', result.stdout)
+        if dd_match:
+            results['max_dd'] = float(dd_match.group(1))
+        
+    except Exception as e:
+        print(f"Risk metrics error: {e}")
+        results['risk'] = 'ERROR'
+    
+    # ==========================================================================
+    # 4. Run sector_comparison.py
+    # ==========================================================================
+    print(f"\n[4/8] Running sector & peer comparison...")
+    try:
+        result = subprocess.run(
+            [sys.executable, "sector_comparison.py", ticker, "--peers", "MSFT", "GOOGL", "META"],
+            capture_output=True, text=True, cwd="."
+        )
+        print(result.stdout)
+    except Exception as e:
+        print(f"Sector comparison error: {e}")
+    
+    # ==========================================================================
+    # 5. Run news_sentiment.py
+    # ==========================================================================
+    print(f"\n[5/8] Analyzing news sentiment...")
+    try:
+        result = subprocess.run(
+            [sys.executable, "news_sentiment.py", ticker],
+            capture_output=True, text=True, cwd="."
+        )
+        print(result.stdout)
+    except Exception as e:
+        print(f"News sentiment error: {e}")
+    
+    # ==========================================================================
+    # 6. Kelly Criterion position sizing
+    # ==========================================================================
+    print(f"\n[6/8] Calculating Kelly Criterion position size...")
+    try:
+        result = subprocess.run(
+            [sys.executable, "kelly_sizer.py", ticker],
+            capture_output=True, text=True, cwd="."
+        )
+        print(result.stdout)
+    except Exception as e:
+        print(f"Kelly sizer error: {e}")
+    
+    # ==========================================================================
+    # 7. Macro economic analysis
+    # ==========================================================================
+    print(f"\n[7/8] Analyzing macro environment...")
+    try:
+        result = subprocess.run(
+            [sys.executable, "macro_analysis.py"],
+            capture_output=True, text=True, cwd="."
+        )
+        print(result.stdout)
+    except Exception as e:
+        print(f"Macro analysis error: {e}")
+    
+    # ==========================================================================
+    # 8. Get earnings context
+    # ==========================================================================
+    print(f"\n[8/8] Fetching earnings context...")
+    try:
+        import yfinance as yf
         stock = yf.Ticker(ticker)
         info = stock.info
         
@@ -25,206 +202,46 @@ def get_earnings_context(ticker):
             print(f"  Market Cap: ${info['marketCap']/1e9:.2f}B")
         if 'recommendationKey' in info:
             print(f"  Analyst Consensus: {info['recommendationKey']}")
-        
-        # Get earnings surprises if available
-        try:
-            earnings = stock.earnings
-            if earnings is not None and len(earnings) > 0:
-                last_earnings = earnings.iloc[-1]
-                print(f"  Last Earnings: {last_earnings.get('Earnings', 'N/A')}")
-        except:
-            pass
-            
     except Exception as e:
         print(f"  Earnings context error: {e}")
-
-def run_master_analysis(ticker):
-    from datetime import datetime
-    today = datetime.now().strftime('%Y-%m-%d')
     
-    print(f"\n{'#'*80}")
-    print(f"# MASTER QUANTITATIVE ANALYSIS: {ticker}")
-    print(f"# CURRENT DATE: {today}")
-    print(f"# DEEP THINKING PROTOCOL ACTIVATED")
-    print(f"{'#'*80}")
-        print(result.stdout)
-        if "RECOMMENDATION: BUY" in result.stdout:
-            results['forecast'] = 'BUY'
-        elif "RECOMMENDATION: SELL" in result.stdout:
-            results['forecast'] = 'SELL'
-        else:
-            results['forecast'] = 'HOLD'
-        
-        # Extract RSI for context
-        rsi_match = re.search(r'RSI \(14\): ([\d.]+)', result.stdout)
-        if rsi_match:
-            results['rsi'] = float(rsi_match.group(1))
-    except Exception as e:
-        print(f"Forecast error: {e}")
-        results['forecast'] = 'ERROR'
-    
-    # Run backtest
-    print("\n[2/5] Running strategy backtests...")
-    try:
-        result = subprocess.run(
-            [sys.executable, "backtest.py", ticker],
-            capture_output=True, text=True, cwd="."
-        )
-        print(result.stdout)
-        if "CONVICTION: STRONG BUY" in result.stdout:
-            results['backtest'] = 'STRONG BUY'
-        elif "CONVICTION: BUY" in result.stdout:
-            results['backtest'] = 'BUY'
-        elif "CONVICTION: STRONG SELL" in result.stdout:
-            results['backtest'] = 'STRONG SELL'
-        else:
-            results['backtest'] = 'SELL'
-    except Exception as e:
-        print(f"Backtest error: {e}")
-        results['backtest'] = 'ERROR'
-    
-    # Run risk metrics
-    print("\n[3/5] Calculating comprehensive risk metrics...")
-    try:
-        result = subprocess.run(
-            [sys.executable, "risk_metrics.py", ticker],
-            capture_output=True, text=True, cwd="."
-        )
-        print(result.stdout)
-        if "RISK RATING:" in result.stdout:
-            match = re.search(r'RISK RATING: (.+)', result.stdout)
-            if match:
-                results['risk'] = match.group(1)
-    except Exception as e:
-        print(f"Risk metrics error: {e}")
-        results['risk'] = 'ERROR'
-    
-    # Run sector comparison
-    print("\n[4/6] Running sector & peer comparison...")
-    try:
-        result = subprocess.run(
-            [sys.executable, "sector_comparison.py", ticker, "--peers", "MSFT", "GOOGL", "META"],
-            capture_output=True, text=True, cwd="."
-        )
-        print(result.stdout)
-    except Exception as e:
-        print(f"Sector comparison error: {e}")
-    
-    # Run news sentiment
-    print("\n[5/6] Analyzing news sentiment...")
-    try:
-        result = subprocess.run(
-            [sys.executable, "news_sentiment.py", ticker],
-            capture_output=True, text=True, cwd="."
-        )
-        print(result.stdout)
-    except Exception as e:
-        print(f"News sentiment error: {e}")
-    
-    # Try SEC filings (may fail due to SSL - SEC blocks automated requests)
-    print("\n[6/7] Fetching SEC filings (skipped - SEC blocks requests)...")
-    print("  TIP: Manually visit https://www.sec.gov for filings")
-    # Disabled: SEC blocks automated requests with 403 Forbidden
-    # try:
-    #     result = subprocess.run(
-    #         [sys.executable, "sec_filings.py", ticker],
-    #         capture_output=True, text=True, cwd=".",
-    #         timeout=10
-    #     )
-    #     print(result.stdout)
-    # except Exception as e:
-    #     print(f"SEC filings skipped: {e}")
-    
-    # Kelly Criterion position sizing
-    print("\n[7/8] Calculating Kelly Criterion position size...")
-    try:
-        result = subprocess.run(
-            [sys.executable, "kelly_sizer.py", ticker],
-            capture_output=True, text=True, cwd="."
-        )
-        print(result.stdout)
-    except Exception as e:
-        print(f"Kelly sizer error: {e}")
-    
-    # Macro economic analysis
-    print("\n[8/8] Analyzing macro environment...")
-    try:
-        result = subprocess.run(
-            [sys.executable, "macro_analysis.py"],
-            capture_output=True, text=True, cwd="."
-        )
-        print(result.stdout)
-    except Exception as e:
-        print(f"Macro analysis error: {e}")
-    
-    # Get earnings context
-    print("\n[BONUS] Fetching earnings context...")
-    get_earnings_context(ticker)
-    
-    # DEEP THINKING SECTION - This is where the AI must reason
+    # ==========================================================================
+    # OUTPUT STRUCTURED DATA FOR AI SYNTHESIS
+    # ==========================================================================
     print(f"\n{'='*80}")
-    print(f"DEEP THINKING SYNTHESIS - REQUIRES ANALYTICAL REASONING")
+    print(f"STRUCTURED DATA OUTPUT (for AI deep analysis)")
     print(f"{'='*80}")
-    print(f"\n[INSTRUCTIONS TO AI: Produce 500+ words of deep analysis here,")
-    print(f" covering ALL sections from references/deep_analysis.md]")
-    print(f"\nSignal Conflicts:")
-    print(f"  - Forecast says: {results.get('forecast', 'N/A')}")
-    print(f"  - Backtest says: {results.get('backtest', 'N/A')}")
-    print(f"  - Risk says: {results.get('risk', 'N/A')}")
-    print(f"\nRSI Context: {results.get('rsi', 'N/A')}")
-    if results.get('rsi'):
-        if results['rsi'] > 70:
-            print(f"  → Overbought! Potential reversal zone.")
-        elif results['rsi'] < 30:
-            print(f"  → Oversold! Potential bounce zone.")
-    print(f"\n{'='*80}\n")
-    
-    # Final Verdict
-    print(f"\n{'='*80}")
-    print(f"FINAL QUANTITATIVE VERDICT: {ticker}")
-    print(f"{'='*80}")
-    
-    # Count signals
-    buy_signals = sum(1 for v in [results.get('forecast'), results.get('backtest')] 
-                      if v in ['BUY', 'STRONG BUY'])
-    sell_signals = sum(1 for v in [results.get('forecast'), results.get('backtest')] 
-                       if v in ['SELL', 'STRONG SELL'])
-    
-    # Determine final verdict
-    if results.get('backtest') == 'STRONG BUY' and results.get('forecast') == 'BUY':
-        verdict = "STRONG BUY"
-        confidence = "VERY HIGH"
-    elif buy_signals >= 2:
-        verdict = "BUY"
-        confidence = "HIGH"
-    elif sell_signals >= 2:
-        verdict = "SELL"
-        confidence = "HIGH"
-    elif results.get('backtest') == 'STRONG SELL':
-        verdict = "STRONG SELL"
-        confidence = "VERY HIGH"
-    else:
-        verdict = "HOLD"
-        confidence = "MEDIUM"
     
     print(f"\nSIGNAL SUMMARY:")
-    print(f"  Forecast: {results.get('forecast', 'N/A')}")
-    print(f"  Backtest: {results.get('backtest', 'N/A')}")
-    print(f"  Risk: {results.get('risk', 'N/A')}")
+    print(f"  Forecast Signal: {results.get('forecast_signal', 'N/A')}")
+    print(f"    - Prophet Change: {results.get('prophet_change', 'N/A')}%")
+    print(f"    - RSI: {results.get('rsi', 'N/A')}")
+    print(f"    - Trend: {results.get('trend', 'N/A')}")
+    print(f"    - Uncertainty: {results.get('uncertainty', 'N/A')}%")
+    
+    print(f"\n  Backtest Conviction: {results.get('backtest', 'N/A')}")
+    print(f"    - Alpha vs Buy&Hold: {results.get('alpha_vs_buy_hold', 'N/A')}%")
+    print(f"    - Sharpe: {results.get('backtest_sharpe', 'N/A')}")
+    
+    print(f"\n  Risk Rating: {results.get('risk', 'N/A')}")
+    print(f"    - Sharpe: {results.get('sharpe', 'N/A')}")
+    print(f"    - Max Drawdown: {results.get('max_dd', 'N/A')}%")
     
     print(f"\n{'='*80}")
-    print(f"  FINAL VERDICT: {verdict}")
-    print(f"  CONFIDENCE: {confidence}")
-    print(f"{'='*80}\n")
+    print(f"DEEP THINKING SYNTHESIS REQUIRED")
+    print(f"{'='*80}")
+    print(f"\n[INSTRUCTIONS TO AI]:")
+    print(f"1. Read references/deep_analysis.md")
+    print(f"2. Fill out references/deep_thought_template.md (500+ words)")
+    print(f"3. Use the STRUCTURED DATA above")
+    print(f"4. Do websearch for recent news/events")
+    print(f"5. Synthesize decisive BUY/SELL/HOLD with confidence")
+    print(f"6. NO disclaimers, NO weak language\n")
     
-    print(f"\n[AI NEXT STEPS: Read references/deep_analysis.md and produce")
-    print(f" deep 500+ word analysis with ALL required sections before")
-    print(f" responding to user. Include specific numbers from above outputs.]\n")
-    
-    return verdict
+    return results
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Master quantitative analysis")
+    parser = argparse.ArgumentParser(description="Master quantitative analysis orchestrator")
     parser.add_argument("ticker", help="Stock ticker (e.g., AAPL)")
     args = parser.parse_args()
     run_master_analysis(args.ticker)
