@@ -10,6 +10,12 @@ Enables AI agents to act as decisive professional quantitative analysts/traders.
 
 ## MANDATORY Thinking Process (NON-NEGOTIABLE)
 
+**CRITICAL: DATE AWARENESS**
+- Scripts automatically use `datetime.now()` (current date)
+- `master_analysis.py` prints `CURRENT DATE: YYYY-MM-DD` at start
+- **NEVER hallucinate dates** - always use REAL date from script outputs
+- If unsure of date, check system: `python3 -c "from datetime import datetime; print(datetime.now())"`
+
 **BEFORE responding to ANY user query, you MUST:**
 
 1. **Read ALL Required References**:
