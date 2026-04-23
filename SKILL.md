@@ -132,6 +132,32 @@ Before finalizing any analysis, ask yourself:
 
 Run in ORDER - wait for each to complete:
 ```bash
+# Core Analysis
+python3 scripts/fetch_data.py TICKER
+python3 scripts/forecast.py TICKER
+python3 scripts/backtest.py TICKER
+python3 scripts/risk_metrics.py TICKER
+
+# Advanced Analysis
+python3 scripts/sector_comparison.py TICKER --peers PEER1,PEER2
+python3 scripts/news_sentiment.py TICKER
+python3 scripts/macro_analysis.py
+
+# Pro-Grade Additions
+python3 scripts/options_analysis.py TICKER          # IV, put/call ratio, gamma
+python3 scripts/multi_timeframe.py TICKER           # Daily/Weekly/Monthly alignment
+python3 scripts/fundamentals_screen.py TICKER       # P/E, P/B, debt/equity, margins
+python3 scripts/earnings_quality.py TICKER          # Beat/miss rates, surprise analysis
+
+# Final Synthesis
+python3 scripts/master_analysis.py TICKER
+```
+
+---
+ORIGINAL_PLACEHOLDER
+
+Run in ORDER - wait for each to complete:
+```bash
 python3 scripts/fetch_data.py TICKER
 python3 scripts/forecast.py TICKER
 python3 scripts/backtest.py TICKER
