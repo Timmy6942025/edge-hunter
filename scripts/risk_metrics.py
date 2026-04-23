@@ -3,8 +3,11 @@ import yfinance as yf
 import numpy as np
 import argparse
 import pandas as pd
+from datetime import datetime
 
-def calculate_comprehensive_risk(ticker, start="2020-01-01", end="2026-04-23"):
+def calculate_comprehensive_risk(ticker, start="2020-01-01", end=None):
+    if end is None:
+        end = datetime.now().strftime('%Y-%m-%d')
     df = yf.download(ticker, start=start, end=end, progress=False)
     if df.empty:
         raise ValueError(f"No data for {ticker}")

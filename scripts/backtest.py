@@ -3,8 +3,11 @@ import yfinance as yf
 import argparse
 import numpy as np
 import pandas as pd
+from datetime import datetime
 
-def backtest_multiple_strategies(ticker, start="2020-01-01", end="2026-04-23"):
+def backtest_multiple_strategies(ticker, start="2020-01-01", end=None):
+    if end is None:
+        end = datetime.now().strftime('%Y-%m-%d')
     # Download data
     df = yf.download(ticker, start=start, end=end, progress=False)
     if df.empty:

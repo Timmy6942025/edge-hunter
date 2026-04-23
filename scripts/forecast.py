@@ -44,7 +44,8 @@ def calculate_technical_indicators(df):
 
 def forecast_stock(ticker, periods=30):
     # Fetch extended history for better training
-    df = yf.download(ticker, start="2018-01-01", end="2026-04-23", progress=False)
+    end_date = datetime.now().strftime('%Y-%m-%d')
+    df = yf.download(ticker, start="2018-01-01", end=end_date, progress=False)
     if df.empty:
         raise ValueError(f"No data for {ticker}")
     

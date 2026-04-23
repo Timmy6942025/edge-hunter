@@ -7,8 +7,11 @@ import yfinance as yf
 import argparse
 import pandas as pd
 import numpy as np
+from datetime import datetime
 
-def analyze_sector_comparison(ticker, sector_etf="XLK", peers=None, start="2020-01-01"):
+def analyze_sector_comparison(ticker, sector_etf="XLK", peers=None, start="2020-01-01", end=None):
+    if end is None:
+        end = datetime.now().strftime('%Y-%m-%d')
     """
     Compare stock to sector ETF and optional peers
     sector_etf: XLK=Tech, XLF=Financial, XLE=Energy, XLV=Health, etc.

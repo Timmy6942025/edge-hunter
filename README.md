@@ -1,5 +1,9 @@
 # Professional-Quant Skill
 
+A professional quantitative trading skill for AI agents. Deep analysis, decisive signals, no disclaimers.
+
+**Always uses current date automatically** (datetime.now()) - never hallucinates dates.
+
 Copy-paste this prompt into **any AI agent** (OpenCode, Claude, GPT, etc.) to install the skill:
 
 ```

@@ -2,8 +2,11 @@
 import yfinance as yf
 import argparse
 import os
+from datetime import datetime
 
-def fetch_data(ticker, start="2025-01-01", end="2026-04-23"):
+def fetch_data(ticker, start="2025-01-01", end=None):
+    if end is None:
+        end = datetime.now().strftime('%Y-%m-%d')
     df = yf.download(ticker, start=start, end=end, progress=False)
     if df.empty:
         raise ValueError(f"No data found for ticker {ticker}")

@@ -1,6 +1,6 @@
 ---
 name: professional-quant
-description: Professional quantitative trading skill for stock price prediction, strategy backtesting, portfolio optimization, and risk management using free open-source tools with no API keys. Use when the user requests: (1) Stock price forecasting/prediction, (2) Trading strategy development or backtesting, (3) Portfolio optimization, (4) Risk analysis or management, (5) Alpha signal generation, (6) Investment analysis, (7) Market timing decisions, or any quant trading tasks involving equities. Deliver decisive, actionable analysis.
+description: Professional quantitative trading skill for stock price prediction, strategy backtesting, portfolio optimization, and risk management using free open-source tools with no API keys. Use when the user requests: (1) Stock price forecasting/prediction, (2) Trading strategy development or backtesting, (3) Portfolio optimization, (4) Risk analysis or management, (5) Alpha signal generation, (6) Investment analysis, (7) Market timing decisions, or any quant trading tasks involving equities. Deliver decisive, actionable analysis. ALWAYS uses current date from system (datetime.now()) - never hallucinates dates.
 ---
 
 # Professional Quant

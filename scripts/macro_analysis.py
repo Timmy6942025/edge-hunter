@@ -18,14 +18,19 @@ def analyze_macro_environment(ticker="SPY"):
     - VIX: Volatility index
     - HYG: High Yield Bonds (risk appetite)
     """
+    from datetime import timedelta
+    today = datetime.now()
+    one_year_ago = (today - timedelta(days=365)).strftime('%Y-%m-%d')
+    today_str = today.strftime('%Y-%m-%d')
+    
     print(f"\n{'='*70}")
-    print(f"MACRO ECONOMIC ANALYSIS")
+    print(f"MACRO ECONOMIC ANALYSIS (as of {today_str})")
     print(f"{'='*70}")
     
     # VIX - Fear Index
     print(f"\nVOLATILITY REGIME (VIX):")
     try:
-        vix = yf.download("^VIX", start="2025-01-01", progress=False)['Close']
+        vix = yf.download("^VIX", start=one_year_ago, end=today_str, progress=False)['Close']
         current_vix = float(vix.iloc[-1])
         avg_vix = float(vix.mean())
         
@@ -54,7 +59,7 @@ def analyze_macro_environment(ticker="SPY"):
     # Treasury Rates (TLT proxy)
     print(f"\nINTEREST RATE ENVIRONMENT (TLT - 20Y Treasury):")
     try:
-        tlt = yf.download("TLT", start="2025-01-01", progress=False)['Close']
+        tlt = yf.download("TLT", start=one_year_ago, end=today_str, progress=False)['Close']
         tlt_returns = tlt.pct_change().dropna()
         
         # Bond prices DOWN = rates UP (negative correlation)
@@ -82,7 +87,7 @@ def analyze_macro_environment(ticker="SPY"):
     # Dollar Strength (UUP)
     print(f"\nDOLLAR STRENGTH (UUP):")
     try:
-        uup = yf.download("UUP", start="2025-01-01", progress=False)['Close']
+        uup = yf.download("UUP", start=one_year_ago, end=today_str, progress=False)['Close']
         uup_3m = float(uup.pct_change(60).iloc[-1] * 100)
         
         print(f"  UUP 3-Month Change: {uup_3m:+.2f}%")
@@ -101,7 +106,7 @@ def analyze_macro_environment(ticker="SPY"):
     # Gold (Inflation Hedge)
     print(f"\nINFLATION HEDGE (GLD - Gold):")
     try:
-        gld = yf.download("GLD", start="2025-01-01", progress=False)['Close']
+        gld = yf.download("GLD", start=one_year_ago, end=today_str, progress=False)['Close']
         gld_3m = float(gld.pct_change(60).iloc[-1] * 100)
         
         print(f"  GLD 3-Month Change: {gld_3m:+.2f}%")
@@ -120,7 +125,7 @@ def analyze_macro_environment(ticker="SPY"):
     # Credit Risk (HYG - High Yield Bonds)
     print(f"\nCREDIT RISK (HYG - High Yield Bonds):")
     try:
-        hyg = yf.download("HYG", start="2025-01-01", progress=False)['Close']
+        hyg = yf.download("HYG", start=one_year_ago, end=today_str, progress=False)['Close']
         hyg_3m = float(hyg.pct_change(60).iloc[-1] * 100)
         
         print(f"  HYG 3-Month Change: {hyg_3m:+.2f}%")
@@ -140,7 +145,7 @@ def analyze_macro_environment(ticker="SPY"):
     print(f"\nINTER-MARKET CORRELATIONS (Last 60 Days):")
     try:
         tickers = ["SPY", "TLT", "GLD", "UUP", "^VIX"]
-        data = yf.download(tickers, start="2025-01-01", progress=False)['Close']
+        data = yf.download(tickers, start=one_year_ago, end=today_str, progress=False)['Close']
         
         if isinstance(data, pd.DataFrame):
             returns = data.pct_change().dropna()

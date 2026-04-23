@@ -39,20 +39,14 @@ def get_earnings_context(ticker):
         print(f"  Earnings context error: {e}")
 
 def run_master_analysis(ticker):
+    from datetime import datetime
+    today = datetime.now().strftime('%Y-%m-%d')
+    
     print(f"\n{'#'*80}")
     print(f"# MASTER QUANTITATIVE ANALYSIS: {ticker}")
+    print(f"# CURRENT DATE: {today}")
     print(f"# DEEP THINKING PROTOCOL ACTIVATED")
     print(f"{'#'*80}")
-    
-    results = {}
-    
-    # Run forecast
-    print("\n[1/5] Running price forecast + technical analysis...")
-    try:
-        result = subprocess.run(
-            [sys.executable, "forecast.py", ticker],
-            capture_output=True, text=True, cwd="."
-        )
         print(result.stdout)
         if "RECOMMENDATION: BUY" in result.stdout:
             results['forecast'] = 'BUY'
