@@ -8,7 +8,7 @@ A professional quantitative trading skill for AI agents. Deep analysis, decisive
 
 ## Install
 
-Copy-paste this prompt into **any AI agent** (OpenCode, Claude, GPT, etc.) to install the skill:
+Copy-paste this prompt into **any AI agent** (OpenCode, kilo code, Codex, etc.) to install the skill:
 
 ```
 Clone the professional-quant skill from https://github.com/Timmy6942025/professional-quant and set it up in my .agents directory so it works immediately.
