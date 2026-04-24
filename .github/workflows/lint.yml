@@ -22,3 +22,6 @@ jobs:
       - name: Run ruff check
         run: ruff check scripts/
 
+      - name: Check formatting
+        run: ruff format --check scripts/
+

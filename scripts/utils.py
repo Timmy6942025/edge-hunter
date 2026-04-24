@@ -28,7 +28,7 @@ def flatten_yf_data(data):
     return data
 
 
-def extract_price_data(raw, column='Close'):
+def extract_price_data(raw, column="Close"):
     """Extract price data from yfinance download result.
 
     Handles both single-ticker and multi-ticker downloads.
@@ -46,16 +46,16 @@ def extract_price_data(raw, column='Close'):
         price_types = raw.columns.get_level_values(0).unique()
         if column in price_types:
             data = raw[column]
-        elif 'Adj Close' in price_types and column == 'Close':
-            data = raw['Adj Close']
+        elif "Adj Close" in price_types and column == "Close":
+            data = raw["Adj Close"]
         else:
             data = raw.iloc[:, 0]
     else:
         # Flat columns - single ticker
         if column in raw.columns:
             data = raw[column]
-        elif 'Adj Close' in raw.columns and column == 'Close':
-            data = raw['Adj Close']
+        elif "Adj Close" in raw.columns and column == "Close":
+            data = raw["Adj Close"]
         else:
             data = raw.iloc[:, 0]
 

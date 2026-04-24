@@ -4,35 +4,38 @@ Fundamentals Screening Script (Free, Pi-Friendly)
 Screens: P/E, P/B, debt/equity, revenue growth, margins
 Uses yfinance for free data - no API keys needed
 """
+
 import argparse
 import numpy as np
 import yfinance as yf
 import sys
 import os
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import flatten_yf_data, extract_price_data, safe_float
 from datetime import datetime
 
+
 def screen_fundamentals(ticker):
     """Comprehensive fundamental screening"""
 
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"FUNDAMENTAL SCREENING: {ticker}")
-    print(f"{'='*70}")
+    print(f"{'=' * 70}")
 
     try:
         stock = yf.Ticker(ticker)
         info = stock.info
 
         # VALUATION METRICS
-        print(f"\n{'─'*70}")
+        print(f"\n{'─' * 70}")
         print(f"VALUATION METRICS")
-        print(f"{'─'*70}")
+        print(f"{'─' * 70}")
 
-        pe_ratio = info.get('trailingPE') or info.get('forwardPE')
-        peg_ratio = info.get('pegRatio')
-        pb_ratio = info.get('priceToBook')
-        ps_ratio = info.get('priceToSalesTrailing12Months')
+        pe_ratio = info.get("trailingPE") or info.get("forwardPE")
+        peg_ratio = info.get("pegRatio")
+        pb_ratio = info.get("priceToBook")
+        ps_ratio = info.get("priceToSalesTrailing12Months")
 
         print(f"  Trailing P/E: {pe_ratio:.2f}" if pe_ratio else "  Trailing P/E: N/A")
         print(f"  Forward P/E: {info.get('forwardPE', 'N/A')}")
@@ -60,19 +63,19 @@ def screen_fundamentals(ticker):
         print(f"  → Valuation Signal: {val_signal}")
 
         # PROFITABILITY METRICS
-        print(f"\n{'─'*70}")
+        print(f"\n{'─' * 70}")
         print(f"PROFITABILITY METRICS")
-        print(f"{'─'*70}")
+        print(f"{'─' * 70}")
 
-        profit_margin = info.get('profitMargins')
-        operating_margin = info.get('operatingMargins')
-        roe = info.get('returnOnEquity')
-        roa = info.get('returnOnAssets')
+        profit_margin = info.get("profitMargins")
+        operating_margin = info.get("operatingMargins")
+        roe = info.get("returnOnEquity")
+        roa = info.get("returnOnAssets")
 
-        print(f"  Profit Margin: {profit_margin*100:.1f}%" if profit_margin else "  Profit Margin: N/A")
-        print(f"  Operating Margin: {operating_margin*100:.1f}%" if operating_margin else "  Operating Margin: N/A")
-        print(f"  ROE: {roe*100:.1f}%" if roe else "  ROE: N/A")
-        print(f"  ROA: {roa*100:.1f}%" if roa else "  ROA: N/A")
+        print(f"  Profit Margin: {profit_margin * 100:.1f}%" if profit_margin else "  Profit Margin: N/A")
+        print(f"  Operating Margin: {operating_margin * 100:.1f}%" if operating_margin else "  Operating Margin: N/A")
+        print(f"  ROE: {roe * 100:.1f}%" if roe else "  ROE: N/A")
+        print(f"  ROA: {roa * 100:.1f}%" if roa else "  ROA: N/A")
 
         profit_score = 0
         if profit_margin:
@@ -101,21 +104,21 @@ def screen_fundamentals(ticker):
         print(f"  → Profitability Signal: {profit_signal}")
 
         # FINANCIAL HEALTH
-        print(f"\n{'─'*70}")
+        print(f"\n{'─' * 70}")
         print(f"FINANCIAL HEALTH")
-        print(f"{'─'*70}")
+        print(f"{'─' * 70}")
 
-        debt_equity = info.get('debtToEquity')
-        current_ratio = info.get('currentRatio')
-        cash = info.get('totalCash')
-        debt = info.get('totalDebt')
-        fcf = info.get('freeCashflow')
+        debt_equity = info.get("debtToEquity")
+        current_ratio = info.get("currentRatio")
+        cash = info.get("totalCash")
+        debt = info.get("totalDebt")
+        fcf = info.get("freeCashflow")
 
         print(f"  Debt/Equity: {debt_equity:.1f}" if debt_equity else "  Debt/Equity: N/A")
         print(f"  Current Ratio: {current_ratio:.2f}" if current_ratio else "  Current Ratio: N/A")
-        print(f"  Total Cash: ${cash/1e9:.2f}B" if cash else "  Total Cash: N/A")
-        print(f"  Total Debt: ${debt/1e9:.2f}B" if debt else "  Total Debt: N/A")
-        print(f"  Free Cash Flow: ${fcf/1e9:.2f}B" if fcf else "  Free Cash Flow: N/A")
+        print(f"  Total Cash: ${cash / 1e9:.2f}B" if cash else "  Total Cash: N/A")
+        print(f"  Total Debt: ${debt / 1e9:.2f}B" if debt else "  Total Debt: N/A")
+        print(f"  Free Cash Flow: ${fcf / 1e9:.2f}B" if fcf else "  Free Cash Flow: N/A")
 
         health_score = 0
         if debt_equity:
@@ -142,15 +145,15 @@ def screen_fundamentals(ticker):
         print(f"  → Financial Health Signal: {health_signal}")
 
         # GROWTH METRICS
-        print(f"\n{'─'*70}")
+        print(f"\n{'─' * 70}")
         print(f"GROWTH METRICS")
-        print(f"{'─'*70}")
+        print(f"{'─' * 70}")
 
-        revenue_growth = info.get('revenueGrowth')
-        earnings_growth = info.get('earningsGrowth')
+        revenue_growth = info.get("revenueGrowth")
+        earnings_growth = info.get("earningsGrowth")
 
-        print(f"  Revenue Growth (YoY): {revenue_growth*100:.1f}%" if revenue_growth else "  Revenue Growth: N/A")
-        print(f"  Earnings Growth (YoY): {earnings_growth*100:.1f}%" if earnings_growth else "  Earnings Growth: N/A")
+        print(f"  Revenue Growth (YoY): {revenue_growth * 100:.1f}%" if revenue_growth else "  Revenue Growth: N/A")
+        print(f"  Earnings Growth (YoY): {earnings_growth * 100:.1f}%" if earnings_growth else "  Earnings Growth: N/A")
 
         growth_score = 0
         if revenue_growth:
@@ -171,15 +174,15 @@ def screen_fundamentals(ticker):
         print(f"  → Growth Signal: {growth_signal}")
 
         # DIVIDEND
-        print(f"\n{'─'*70}")
+        print(f"\n{'─' * 70}")
         print(f"DIVIDEND & CAPITAL RETURN")
-        print(f"{'─'*70}")
+        print(f"{'─' * 70}")
 
-        dividend_yield = info.get('dividendYield')
-        payout_ratio = info.get('payoutRatio')
+        dividend_yield = info.get("dividendYield")
+        payout_ratio = info.get("payoutRatio")
 
-        print(f"  Dividend Yield: {dividend_yield*100:.2f}%" if dividend_yield else "  Dividend Yield: N/A")
-        print(f"  Payout Ratio: {payout_ratio*100:.1f}%" if payout_ratio else "  Payout Ratio: N/A")
+        print(f"  Dividend Yield: {dividend_yield * 100:.2f}%" if dividend_yield else "  Dividend Yield: N/A")
+        print(f"  Payout Ratio: {payout_ratio * 100:.1f}%" if payout_ratio else "  Payout Ratio: N/A")
 
         if dividend_yield:
             if dividend_yield > 0.03 and payout_ratio and payout_ratio < 0.6:
@@ -194,13 +197,13 @@ def screen_fundamentals(ticker):
         print(f"  → Dividend Signal: {div_signal}")
 
         # ANALYST SENTIMENT
-        print(f"\n{'─'*70}")
+        print(f"\n{'─' * 70}")
         print(f"ANALYST SENTIMENT")
-        print(f"{'─'*70}")
+        print(f"{'─' * 70}")
 
-        target_price = info.get('targetMeanPrice')
-        current_price = info.get('currentPrice') or info.get('regularMarketPrice')
-        recom = info.get('recommendationKey')
+        target_price = info.get("targetMeanPrice")
+        current_price = info.get("currentPrice") or info.get("regularMarketPrice")
+        recom = info.get("recommendationKey")
 
         if target_price and current_price:
             upside = (target_price / current_price - 1) * 100
@@ -223,9 +226,9 @@ def screen_fundamentals(ticker):
         print(f"  → Analyst Signal: {analyst_signal}")
 
         # OVERALL SCORE
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print(f"FUNDAMENTAL SCORE SUMMARY")
-        print(f"{'='*70}")
+        print(f"{'=' * 70}")
 
         total_score = val_score + profit_score + health_score + growth_score
         max_score = 8
@@ -239,7 +242,7 @@ def screen_fundamentals(ticker):
         print(f"  ─────────────────────────────────────────")
         print(f"    TOTAL SCORE: {total_score:+.1f} / {max_score} ({pct_score:+.0f}%)")
 
-        print(f"\n{'─'*70}")
+        print(f"\n{'─' * 70}")
         if pct_score >= 60:
             verdict = "STRONG FUNDAMENTALS"
             print(f"VERDICT: {verdict} - Quality company, attractive valuation")
@@ -253,7 +256,7 @@ def screen_fundamentals(ticker):
             verdict = "POOR FUNDAMENTALS"
             print(f"VERDICT: {verdict} - Avoid or deep value opportunity")
 
-        print(f"{'='*70}\n")
+        print(f"{'=' * 70}\n")
 
         return {
             "valuation_signal": val_signal,
@@ -262,14 +265,16 @@ def screen_fundamentals(ticker):
             "growth_signal": growth_signal,
             "total_score": total_score,
             "pct_score": pct_score,
-            "verdict": verdict
+            "verdict": verdict,
         }
 
     except Exception as e:
         print(f"❌ Error screening fundamentals: {e}")
         import traceback
+
         traceback.print_exc()
         return None
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fundamental screening - P/E, margins, growth")

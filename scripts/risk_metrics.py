@@ -5,13 +5,15 @@ import argparse
 import pandas as pd
 import sys
 import os
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import flatten_yf_data, extract_price_data
 from datetime import datetime
 
+
 def calculate_comprehensive_risk(ticker, start="2020-01-01", end=None):
     if end is None:
-        end = datetime.now().strftime('%Y-%m-%d')
+        end = datetime.now().strftime("%Y-%m-%d")
     df = yf.download(ticker, start=start, end=end, progress=False)
     if df.empty:
         raise ValueError(f"No data for {ticker}")
@@ -19,11 +21,11 @@ def calculate_comprehensive_risk(ticker, start="2020-01-01", end=None):
     # Flatten MultiIndex columns (yfinance compat)
     df = flatten_yf_data(df)
 
-    close = df['Close']
+    close = df["Close"]
     returns = close.pct_change().dropna()
 
     # Basic metrics
-    ann_factor = 252 ** 0.5
+    ann_factor = 252**0.5
     total_return = float((close.iloc[-1] / close.iloc[0] - 1) * 100)
 
     mean_return = float(returns.mean() * 252 * 100)
@@ -39,7 +41,7 @@ def calculate_comprehensive_risk(ticker, start="2020-01-01", end=None):
         sortino = 0
 
     cummax = close.cummax()
-    drawdown = (close / cummax - 1)
+    drawdown = close / cummax - 1
     max_dd = float(drawdown.min() * 100)
     current_dd = float(drawdown.iloc[-1] * 100)
 
@@ -51,7 +53,7 @@ def calculate_comprehensive_risk(ticker, start="2020-01-01", end=None):
 
     # Beta (vs S&P 500)
     try:
-        spy = extract_price_data(yf.download("SPY", start=start, end=end, progress=False), 'Close')
+        spy = extract_price_data(yf.download("SPY", start=start, end=end, progress=False), "Close")
         spy_returns = spy.pct_change().dropna()
 
         # Align the series
@@ -75,7 +77,7 @@ def calculate_comprehensive_risk(ticker, start="2020-01-01", end=None):
     # Average win/loss
     avg_win = float(returns[returns > 0].mean() * 100) if (returns > 0).any() else 0
     avg_loss = float(returns[returns < 0].mean() * 100) if (returns < 0).any() else 0
-    profit_factor = abs(avg_win / avg_loss) if avg_loss != 0 else float('inf')
+    profit_factor = abs(avg_win / avg_loss) if avg_loss != 0 else float("inf")
 
     # Calmar ratio
     calmar = (mean_return / abs(max_dd)) if max_dd != 0 else 0
@@ -91,9 +93,9 @@ def calculate_comprehensive_risk(ticker, start="2020-01-01", end=None):
         risk_rating = "VERY HIGH RISK / AVOID"
 
     # Output
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"COMPREHENSIVE RISK ANALYSIS: {ticker}")
-    print(f"{'='*70}")
+    print(f"{'=' * 70}")
 
     print(f"\nPERFORMANCE METRICS:")
     print(f"  Total Return: {total_return:.2f}%")
@@ -122,16 +124,12 @@ def calculate_comprehensive_risk(ticker, start="2020-01-01", end=None):
     print(f"  Avg Loss: {avg_loss:.3f}%")
     print(f"  Profit Factor: {profit_factor:.2f}")
 
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"RISK RATING: {risk_rating}")
-    print(f"{'='*70}\n")
+    print(f"{'=' * 70}\n")
 
-    return {
-        "sharpe": sharpe,
-        "sortino": sortino,
-        "max_dd": max_dd,
-        "risk_rating": risk_rating
-    }
+    return {"sharpe": sharpe, "sortino": sortino, "max_dd": max_dd, "risk_rating": risk_rating}
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Comprehensive risk analysis")

@@ -7,6 +7,7 @@ Backtesting Engine - Strict Quant Rules Applied
 4. Sanity checks (tripwires for impossible metrics)
 5. Baseline benchmark (Buy & Hold comparison)
 """
+
 import yfinance as yf
 import argparse
 import numpy as np
@@ -14,13 +15,15 @@ import pandas as pd
 from datetime import datetime
 import sys
 import os
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import flatten_yf_data
 
 # STRICT CONSTANTS
 EXCHANGE_FEE = 0.001  # 0.1% fee per transaction (entry AND exit)
-SLIPPAGE = 0.0005   # 0.05% slippage per trade
+SLIPPAGE = 0.0005  # 0.05% slippage per trade
 MAX_LEVERAGE = 1.0  # No leverage allowed (cap at 1x)
+
 
 def calculate_log_returns(close_prices, positions):
     """
@@ -39,6 +42,7 @@ def calculate_log_returns(close_prices, positions):
 
     return strategy_log_returns, cumulative
 
+
 def apply_friction(returns, entry_signals, exit_signals):
     """
     Apply exchange fees and slippage to returns.
@@ -52,7 +56,7 @@ def apply_friction(returns, entry_signals, exit_signals):
     # Apply friction to returns
     # Fee: 0.1% per transaction (entry + exit = 0.2% per round trip)
     # Slippage: 0.05% per trade
-    total_friction = (EXCHANGE_FEE * 2 + SLIPPAGE * 2)  # Round trip friction
+    total_friction = EXCHANGE_FEE * 2 + SLIPPAGE * 2  # Round trip friction
 
     # Deduct friction from returns on days we trade
     friction_cost = trades * total_friction
@@ -60,9 +64,10 @@ def apply_friction(returns, entry_signals, exit_signals):
 
     return returns_after_fees, num_trades
 
+
 def backtest_strategy(ticker, start="2020-01-01", end=None):
     if end is None:
-        end = datetime.now().strftime('%Y-%m-%d')
+        end = datetime.now().strftime("%Y-%m-%d")
 
     # Download data
     df = yf.download(ticker, start=start, end=end, progress=False)
@@ -72,8 +77,8 @@ def backtest_strategy(ticker, start="2020-01-01", end=None):
     # Flatten MultiIndex columns (yfinance compat)
     df = flatten_yf_data(df)
 
-    close = df['Close']
-    open_price = df['Open'] if 'Open' in df.columns else close
+    close = df["Close"]
+    open_price = df["Open"] if "Open" in df.columns else close
 
     returns = close.pct_change().dropna()
     results = []
@@ -116,15 +121,17 @@ def backtest_strategy(ticker, start="2020-01-01", end=None):
     total_days = (strategy_returns != 0).sum()
     win_rate = (winning_days / total_days * 100) if total_days > 0 else 0
 
-    results.append({
-        "strategy": "SMA_50_200",
-        "return": float(total_return),
-        "sharpe": sharpe,
-        "max_dd": max_dd,
-        "win_rate": float(win_rate),
-        "num_trades": int(num_trades),
-        "win": total_return > 0
-    })
+    results.append(
+        {
+            "strategy": "SMA_50_200",
+            "return": float(total_return),
+            "sharpe": sharpe,
+            "max_dd": max_dd,
+            "win_rate": float(win_rate),
+            "num_trades": int(num_trades),
+            "win": total_return > 0,
+        }
+    )
 
     # ==========================================================================
     # STRATEGY 2: RSI Mean Reversion - NO LOOK-AHEAD BIAS
@@ -157,15 +164,17 @@ def backtest_strategy(ticker, start="2020-01-01", end=None):
     total_days = (strategy_returns != 0).sum()
     win_rate = (winning_days / total_days * 100) if total_days > 0 else 0
 
-    results.append({
-        "strategy": "RSI_Mean_Reversion",
-        "return": float(total_return),
-        "sharpe": sharpe,
-        "max_dd": max_dd,
-        "win_rate": float(win_rate),
-        "num_trades": int(num_trades),
-        "win": total_return > 0
-    })
+    results.append(
+        {
+            "strategy": "RSI_Mean_Reversion",
+            "return": float(total_return),
+            "sharpe": sharpe,
+            "max_dd": max_dd,
+            "win_rate": float(win_rate),
+            "num_trades": int(num_trades),
+            "win": total_return > 0,
+        }
+    )
 
     # ==========================================================================
     # STRATEGY 3: Momentum (20-day) - NO LOOK-AHEAD BIAS
@@ -192,15 +201,17 @@ def backtest_strategy(ticker, start="2020-01-01", end=None):
     total_days = (strategy_returns != 0).sum()
     win_rate = (winning_days / total_days * 100) if total_days > 0 else 0
 
-    results.append({
-        "strategy": "Momentum_20d",
-        "return": float(total_return),
-        "sharpe": sharpe,
-        "max_dd": max_dd,
-        "win_rate": float(win_rate),
-        "num_trades": int(num_trades),
-        "win": total_return > 0
-    })
+    results.append(
+        {
+            "strategy": "Momentum_20d",
+            "return": float(total_return),
+            "sharpe": sharpe,
+            "max_dd": max_dd,
+            "win_rate": float(win_rate),
+            "num_trades": int(num_trades),
+            "win": total_return > 0,
+        }
+    )
 
     # ==========================================================================
     # BASELINE: Buy and Hold (for alpha comparison)
@@ -215,18 +226,18 @@ def backtest_strategy(ticker, start="2020-01-01", end=None):
     # ==========================================================================
     # OUTPUT
     # ==========================================================================
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"BACKTEST RESULTS: {ticker} ({start} to {end})")
-    print(f"Friction Applied: {EXCHANGE_FEE*100:.1f}% fee + {SLIPPAGE*100:.1f}% slippage per trade")
+    print(f"Friction Applied: {EXCHANGE_FEE * 100:.1f}% fee + {SLIPPAGE * 100:.1f}% slippage per trade")
     print(f"Max Leverage Capped: {MAX_LEVERAGE:.1f}x")
-    print(f"{'='*70}")
+    print(f"{'=' * 70}")
 
     print(f"\n{'Strategy':<25} {'Return':>10} {'Sharpe':>10} {'Max DD':>10} {'Win%':>8} {'Trades':>8} {'Alpha':>10}")
-    print(f"{'-'*70}")
+    print(f"{'-' * 70}")
 
     for r in results:
-        alpha = r['return'] - buy_hold_return
-        result_str = "WIN" if r['win'] else "LOSS"
+        alpha = r["return"] - buy_hold_return
+        result_str = "WIN" if r["win"] else "LOSS"
         print(
             f"{r['strategy']:<25} {r['return']:>9.2f}% "
             f"{r['sharpe']:>10.2f} {r['max_dd']:>9.2f}% "
@@ -241,15 +252,11 @@ def backtest_strategy(ticker, start="2020-01-01", end=None):
     )
 
     # Find best strategy
-    best = max(results, key=lambda x: x['return'])
+    best = max(results, key=lambda x: x["return"])
 
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"BEST STRATEGY: {best['strategy']}")
-    print(
-        f"Return: {best['return']:.2f}% | "
-        f"Sharpe: {best['sharpe']:.2f} | "
-        f"Max DD: {best['max_dd']:.2f}%"
-    )
+    print(f"Return: {best['return']:.2f}% | Sharpe: {best['sharpe']:.2f} | Max DD: {best['max_dd']:.2f}%")
     print(
         f"Win Rate: {best['win_rate']:.1f}% | "
         f"Trades: {best['num_trades']} | "
@@ -262,49 +269,50 @@ def backtest_strategy(ticker, start="2020-01-01", end=None):
     warnings = []
 
     # Win Rate > 80% (statistically improbable)
-    if best['win_rate'] > 80:
+    if best["win_rate"] > 80:
         warnings.append("WARNING: Win Rate >80% - Statistically improbable. Check for look-ahead bias or overfitting.")
 
     # Sharpe > 3.5 (extremely rare in real markets)
-    if best['sharpe'] > 3.5:
+    if best["sharpe"] > 3.5:
         warnings.append("WARNING: Sharpe Ratio >3.5 - Extremely rare. Likely overfitting or forward-looking bias.")
 
     # ROI > 5000% over short timeframe (impossible without leverage)
-    days_of_data = (datetime.strptime(end, '%Y-%m-%d') - datetime.strptime(start, '%Y-%m-%d')).days
-    if best['return'] > 5000 and days_of_data < 365 * 5:
+    days_of_data = (datetime.strptime(end, "%Y-%m-%d") - datetime.strptime(start, "%Y-%m-%d")).days
+    if best["return"] > 5000 and days_of_data < 365 * 5:
         warnings.append("WARNING: ROI >5000% in <5 years - Impossible without extreme leverage or data snooping.")
 
     # Check for negative trades (shouldn't happen with long-only)
-    if best['num_trades'] == 0:
+    if best["num_trades"] == 0:
         warnings.append("WARNING: No trades executed - Check position logic and shift() rule.")
 
     if warnings:
-        print(f"\n{'!'*70}")
+        print(f"\n{'!' * 70}")
         print("SANITY CHECK TRIPWIRES TRIGGERED:")
         for w in warnings:
             print(f"  ⚠ {w}")
-        print(f"{'!'*70}\n")
+        print(f"{'!' * 70}\n")
         results.append({"warnings": warnings})
 
     # Conviction
-    winning_strategies = sum(1 for r in results if r.get('win', False) and isinstance(r.get('return'), float))
+    winning_strategies = sum(1 for r in results if r.get("win", False) and isinstance(r.get("return"), float))
 
-    if best['return'] > buy_hold_return and best['sharpe'] > buy_hold_sharpe and best['sharpe'] > 1:
+    if best["return"] > buy_hold_return and best["sharpe"] > buy_hold_sharpe and best["sharpe"] > 1:
         conviction = "STRONG BUY (Alpha Generated)"
-    elif best['return'] > buy_hold_return:
+    elif best["return"] > buy_hold_return:
         conviction = "BUY (Positive Alpha)"
-    elif best['return'] < buy_hold_return - 10:
+    elif best["return"] < buy_hold_return - 10:
         conviction = "STRONG SELL (Underperforms Buy&Hold)"
     else:
         conviction = "SELL (No Alpha)"
 
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"BACKTEST CONVICTION: {conviction}")
-    bh_alpha = best['return'] - buy_hold_return
+    bh_alpha = best["return"] - buy_hold_return
     print(f"Alpha Generated: {bh_alpha:+.2f}% vs Buy&Hold")
-    print(f"{'='*70}\n")
+    print(f"{'=' * 70}\n")
 
     return results
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Backtest with strict quant rules (no look-ahead, with friction)")

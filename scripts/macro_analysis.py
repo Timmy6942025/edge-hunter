@@ -4,15 +4,18 @@ Macro Economic Analysis
 Fetches key macro indicators that affect stock prices (Free, no API key)
 Uses yfinance for ETFs that track macro indicators
 """
+
 import yfinance as yf
 import pandas as pd
 import numpy as np
 import argparse
 import sys
 import os
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import extract_price_data
 from datetime import datetime, timedelta
+
 
 def analyze_macro_environment(ticker="SPY"):
     """
@@ -24,17 +27,17 @@ def analyze_macro_environment(ticker="SPY"):
     - HYG: High Yield Bonds (risk appetite)
     """
     today = datetime.now()
-    one_year_ago = (today - timedelta(days=365)).strftime('%Y-%m-%d')
-    today_str = today.strftime('%Y-%m-%d')
+    one_year_ago = (today - timedelta(days=365)).strftime("%Y-%m-%d")
+    today_str = today.strftime("%Y-%m-%d")
 
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"MACRO ECONOMIC ANALYSIS (as of {today_str})")
-    print(f"{'='*70}")
+    print(f"{'=' * 70}")
 
     # VIX - Fear Index
     print(f"\nVOLATILITY REGIME (VIX):")
     try:
-        vix = extract_price_data(yf.download("^VIX", start=one_year_ago, end=today_str, progress=False), 'Close')
+        vix = extract_price_data(yf.download("^VIX", start=one_year_ago, end=today_str, progress=False), "Close")
         current_vix = float(vix.iloc[-1])
         avg_vix = float(vix.mean())
 
@@ -63,7 +66,7 @@ def analyze_macro_environment(ticker="SPY"):
     # Treasury Rates (TLT proxy)
     print(f"\nINTEREST RATE ENVIRONMENT (TLT - 20Y Treasury):")
     try:
-        tlt = extract_price_data(yf.download("TLT", start=one_year_ago, end=today_str, progress=False), 'Close')
+        tlt = extract_price_data(yf.download("TLT", start=one_year_ago, end=today_str, progress=False), "Close")
         tlt_returns = tlt.pct_change().dropna()
 
         # Bond prices DOWN = rates UP (negative correlation)
@@ -91,7 +94,7 @@ def analyze_macro_environment(ticker="SPY"):
     # Dollar Strength (UUP)
     print(f"\nDOLLAR STRENGTH (UUP):")
     try:
-        uup = extract_price_data(yf.download("UUP", start=one_year_ago, end=today_str, progress=False), 'Close')
+        uup = extract_price_data(yf.download("UUP", start=one_year_ago, end=today_str, progress=False), "Close")
         uup_3m = float(uup.pct_change(60).iloc[-1] * 100)
 
         print(f"  UUP 3-Month Change: {uup_3m:+.2f}%")
@@ -110,7 +113,7 @@ def analyze_macro_environment(ticker="SPY"):
     # Gold (Inflation Hedge)
     print(f"\nINFLATION HEDGE (GLD - Gold):")
     try:
-        gld = extract_price_data(yf.download("GLD", start=one_year_ago, end=today_str, progress=False), 'Close')
+        gld = extract_price_data(yf.download("GLD", start=one_year_ago, end=today_str, progress=False), "Close")
         gld_3m = float(gld.pct_change(60).iloc[-1] * 100)
 
         print(f"  GLD 3-Month Change: {gld_3m:+.2f}%")
@@ -129,7 +132,7 @@ def analyze_macro_environment(ticker="SPY"):
     # Credit Risk (HYG - High Yield Bonds)
     print(f"\nCREDIT RISK (HYG - High Yield Bonds):")
     try:
-        hyg = extract_price_data(yf.download("HYG", start=one_year_ago, end=today_str, progress=False), 'Close')
+        hyg = extract_price_data(yf.download("HYG", start=one_year_ago, end=today_str, progress=False), "Close")
         hyg_3m = float(hyg.pct_change(60).iloc[-1] * 100)
 
         print(f"  HYG 3-Month Change: {hyg_3m:+.2f}%")
@@ -149,11 +152,11 @@ def analyze_macro_environment(ticker="SPY"):
     print(f"\nINTER-MARKET CORRELATIONS (Last 60 Days):")
     try:
         tickers = ["SPY", "TLT", "GLD", "UUP", "^VIX"]
-        data = extract_price_data(yf.download(tickers, start=one_year_ago, end=today_str, progress=False), 'Close')
+        data = extract_price_data(yf.download(tickers, start=one_year_ago, end=today_str, progress=False), "Close")
 
         if isinstance(data, pd.DataFrame):
             returns = data.pct_change().dropna()
-            spy_returns = returns['SPY']
+            spy_returns = returns["SPY"]
 
             print(f"  SPY vs TLT (rates): {spy_returns.corr(returns['TLT']):.3f} (expect negative)")
             print(f"  SPY vs GLD (inflation): {spy_returns.corr(returns['GLD']):.3f}")
@@ -163,7 +166,7 @@ def analyze_macro_environment(ticker="SPY"):
         print(f"  Correlation error: {e}")
 
     # Final Macro Rating
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"MACRO RATING FOR EQUITIES:")
 
     score = 0
@@ -176,9 +179,9 @@ def analyze_macro_environment(ticker="SPY"):
     elif rating == "DEFENSIVE":
         score -= 2
 
-    if 'rate_regime' in locals() and "FALLING" in rate_regime:
+    if "rate_regime" in locals() and "FALLING" in rate_regime:
         score += 1
-    elif 'rate_regime' in locals() and "RISING" in rate_regime:
+    elif "rate_regime" in locals() and "RISING" in rate_regime:
         score -= 1
 
     if score >= 2:
@@ -193,9 +196,10 @@ def analyze_macro_environment(ticker="SPY"):
         macro_rating = "VERY BEARISH - All macro factors negative"
 
     print(f"  {macro_rating}")
-    print(f"{'='*70}\n")
+    print(f"{'=' * 70}\n")
 
     return macro_rating
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Macro economic analysis (free, no API key)")
