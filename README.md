@@ -15,7 +15,7 @@ Clone the professional-quant skill from https://github.com/Timmy6942025/professi
 
 Steps:
 1. git clone https://github.com/Timmy6942025/professional-quant.git ~/.agents/skills/professional-quant
-2. pip3 install --break-system-packages yfinance vectorbt prophet PyPortfolioOpt numpy pandas
+2. pip3 install --break-system-packages yfinance vectorbt prophet PyPortfolioOpt numpy pandas ruff
 3. Confirm the skill is installed by checking if ~/.agents/skills/professional-quant/SKILL.md exists.
 
 Then tell me "Skill installed. Ready for deep quant analysis."
@@ -52,6 +52,20 @@ Analyze AAPL stock and tell me if I should invest.
 ```
 
 The agent will automatically use the skill to produce 500+ words of deep analysis with decisive BUY/SELL/HOLD verdict, confidence level, and entry/exit levels. No disclaimers.
+
+## Code Quality
+
+All scripts pass `ruff` linting with a security-focused configuration.
+
+```bash
+# Check for issues
+cd ~/.agents/skills/professional-quant && ruff check scripts/
+
+# Auto-fix trivial issues
+ruff check scripts/ --fix
+```
+
+Key rules: no bare `except:`, `subprocess.run()` must have `check=False` and `timeout`, line length ≤ 120, no unused variables.
 
 ## Repository
 https://github.com/Timmy6942025/professional-quant

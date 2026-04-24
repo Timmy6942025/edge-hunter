@@ -249,7 +249,7 @@ Using `references/deep_analysis.md` as your guide, write comprehensive analysis 
 | Price Prediction | `forecast.py` | Prophet + technical signals |
 | Strategy Backtesting | `backtest.py` | Momentum, RSI, SMA strategies |
 | Risk Management | `risk_metrics.py` | Sharpe, Sortino, VaR, Beta |
-| Portfolio Optimization | `portfolio_optimizer.py` | Max Sharpe, Min Vol, HRP |
+| Portfolio Optimization | `portfolio_optimizer.py` | Max Sharpe, Min Vol, HRP, risk parity |
 | Sector Comparison | `sector_comparison.py` | Relative strength vs peers |
 | Sentiment Analysis | `news_sentiment.py` | Bullish/bearish scoring |
 | Macro Analysis | `macro_analysis.py` | VIX, rates, dollar, inflation |
@@ -257,7 +257,6 @@ Using `references/deep_analysis.md` as your guide, write comprehensive analysis 
 | Multi-Timeframe | `multi_timeframe.py` | Daily/Weekly/Monthly alignment |
 | Fundamentals Screening | `fundamentals_screen.py` | P/E, P/B, debt/equity, margins |
 | Earnings Quality | `earnings_quality.py` | Beat/miss rates, surprise analysis |
-| Portfolio Optimization | `portfolio_optimizer.py` | MVO, efficient frontier, risk parity |
 | Correlation Analysis | `correlation_matrix.py` | Pairwise correlations, diversification |
 | Sector Rotation | `sector_rotation.py` | Sector momentum, rotation signals |
 | Insider Tracking | `insider_tracker.py` | Ownership structure, sentiment |
@@ -267,21 +266,7 @@ Using `references/deep_analysis.md` as your guide, write comprehensive analysis 
 | Regime Detection | `regime_detector.py` | Bull/bear/sideways detection |
 | Fibonacci Levels | `fibonacci_levels.py` | Retracement/extension levels |
 | Volume Profile | `volume_profile.py` | VWAP, POC, value area |
-| Position Sizing | `options_analysis.py` | IV, put/call ratio, gamma exposure |
-| `multi_timeframe.py` | Daily/Weekly/Monthly trend alignment |
-| `fundamentals_screen.py` | P/E, P/B, debt/equity, margins screening |
-| `earnings_quality.py` | Beat/miss rates, surprise analysis |
-| `portfolio_optimizer.py` | MVO, efficient frontier, max Sharpe, risk parity |
-| `correlation_matrix.py` | Pairwise correlations, diversification analysis |
-| `sector_rotation.py` | Sector momentum, rotation signals |
-| `insider_tracker.py` | Insider ownership, sentiment signals |
-| `short_squeeze.py` | Short interest, squeeze potential scoring |
-| `technical_alerts.py` | Breakout/breakdown detection, RSI alerts |
-| `multi_stock_compare.py` | Side-by-side ticker comparison, ranking |
-| `regime_detector.py` | Bull/bear/sideways market detection |
-| `fibonacci_levels.py` | Fibonacci retracement/extension levels |
-| `volume_profile.py` | VWAP, POC, value area analysis |
-| `kelly_sizer.py` | Kelly Criterion position sizing |
+| Position Sizing | `kelly_sizer.py` | Kelly Criterion position sizing |
 | Master Analysis | `master_analysis.py` | Aggregated final verdict |
 
 ---
@@ -292,12 +277,11 @@ All scripts use `datetime.now()` - NEVER hallucinate dates.
 
 | Script | Purpose |
 |--------|---------|
-| `master_analysis.py` | **Run FIRST** - Combines all signals |
+| `master_analysis.py` | **Run LAST** - Combines all signals into final verdict |
 | `fetch_data.py` | 2+ years historical data via yfinance |
 | `forecast.py` | Prophet forecast + RSI/MACD/BB |
 | `backtest.py` | Multiple strategies with strict quant rules |
 | `risk_metrics.py` | Comprehensive risk profile |
-| `portfolio_optimizer.py` | Portfolio optimization (Max Sharpe, Min Vol, HRP) |
 | `sector_comparison.py` | Compare to sector ETF and peers |
 | `macro_analysis.py` | Economic context (VIX, TLT, GLD, UUP) |
 | `news_sentiment.py` | News sentiment scoring |
@@ -316,6 +300,31 @@ All scripts use `datetime.now()` - NEVER hallucinate dates.
 | `fibonacci_levels.py` | Fibonacci retracement/extension levels |
 | `volume_profile.py` | VWAP, POC, value area analysis |
 | `kelly_sizer.py` | Kelly Criterion position sizing |
+| `sec_filings.py` | SEC 10-K/10-Q filing analysis |
+
+---
+
+## Code Quality & Linting
+
+All scripts are linted with **ruff** using a security-focused configuration (`ruff.toml`).
+
+```bash
+# Run lint check
+cd ~/.agents/skills/professional-quant && ruff check scripts/
+
+# Auto-fix trivial issues
+ruff check scripts/ --fix
+```
+
+Key rules enforced:
+- **E722**: No bare `except:` (must use `except Exception:`)
+- **BLE001**: Blind exception handling (ignored — intentional fallbacks in CLI scripts)
+- **PLW1510**: `subprocess.run()` must include `check=False` and `timeout`
+- **S (Bandit)**: Security flags for subprocess, SSL, URL handling
+- **E501**: Line length ≤ 120 characters
+- **RUF059**: Unused variables
+- **E741**: Ambiguous variable names (e.g., `l` → `lvl`)
+- **PLW2901**: Loop variable overwrite
 
 ---
 

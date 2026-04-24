@@ -16,16 +16,16 @@ from datetime import datetime
 def run_master_analysis(ticker):
     from datetime import datetime
     today = datetime.now().strftime('%Y-%m-%d')
-    
+
     print(f"\n{'#'*80}")
     print(f"# MASTER QUANTITATIVE ANALYSIS: {ticker}")
     print(f"# CURRENT DATE: {today}")
     print(f"# DEEP THINKING PROTOCOL ACTIVATED")
     print(f"# NO FAKE RECOMMENDATIONS - DATA ONLY")
     print(f"{'#'*80}")
-    
+
     results = {}
-    
+
     # ==========================================================================
     # 1. Run forecast.py (Prophet + technical indicators)
     # ==========================================================================
@@ -33,31 +33,32 @@ def run_master_analysis(ticker):
     try:
         result = subprocess.run(
             [sys.executable, "forecast.py", ticker],
-            capture_output=True, text=True, cwd=".", timeout=120
+            capture_output=True, text=True, cwd=".", timeout=120,
+            check=False
         )
         print(result.stdout)
-        
+
         # Parse NEW output format from forecast.py
         # Extract prophet_change_pct
         change_match = re.search(r'prophet_change_pct: ([-+]?\d+\.\d+)', result.stdout)
         if change_match:
             results['prophet_change'] = float(change_match.group(1))
-        
+
         # Extract RSI
         rsi_match = re.search(r'rsi: ([\d.]+)', result.stdout)
         if rsi_match:
             results['rsi'] = float(rsi_match.group(1))
-        
+
         # Extract trend
         trend_match = re.search(r'trend: (\w+)', result.stdout)
         if trend_match:
             results['trend'] = trend_match.group(1)
-        
+
         # Extract uncertainty
         uncertainty_match = re.search(r'uncertainty_range_pct: ([\d.]+)', result.stdout)
         if uncertainty_match:
             results['uncertainty'] = float(uncertainty_match.group(1))
-        
+
         # Set forecast signal based on data (not fake recommendation)
         if results.get('prophet_change', 0) > 0 and results.get('rsi', 50) < 70:
             results['forecast_signal'] = 'BULLISH'
@@ -65,7 +66,7 @@ def run_master_analysis(ticker):
             results['forecast_signal'] = 'BEARISH'
         else:
             results['forecast_signal'] = 'NEUTRAL'
-        
+
     except FileNotFoundError as e:
         print(f"Forecast error: Script not found - {e}")
         results['forecast_signal'] = 'ERROR'
@@ -75,7 +76,7 @@ def run_master_analysis(ticker):
     except Exception as e:
         print(f"Forecast error: {type(e).__name__} - {e}")
         results['forecast_signal'] = 'ERROR'
-    
+
     # ==========================================================================
     # 2. Run backtest.py (STRICT quant rules applied)
     # ==========================================================================
@@ -83,10 +84,11 @@ def run_master_analysis(ticker):
     try:
         result = subprocess.run(
             [sys.executable, "backtest.py", ticker],
-            capture_output=True, text=True, cwd=".", timeout=120
+            capture_output=True, text=True, cwd=".", timeout=120,
+            check=False
         )
         print(result.stdout)
-        
+
         # Parse backtest conviction
         if "CONVICTION: STRONG BUY" in result.stdout:
             results['backtest'] = 'STRONG BUY'
@@ -96,17 +98,17 @@ def run_master_analysis(ticker):
             results['backtest'] = 'STRONG SELL'
         else:
             results['backtest'] = 'SELL'
-        
+
         # Parse alpha vs buy & hold
         alpha_match = re.search(r'Alpha Generated: ([+-]?\d+\.\d+)%', result.stdout)
         if alpha_match:
             results['alpha_vs_buy_hold'] = float(alpha_match.group(1))
-        
+
         # Parse Sharpe
         sharpe_match = re.search(r'Sharpe: ([\d.]+)', result.stdout)
         if sharpe_match:
             results['backtest_sharpe'] = float(sharpe_match.group(1))
-        
+
     except FileNotFoundError as e:
         print(f"Backtest error: Script not found - {e}")
         results['backtest'] = 'ERROR'
@@ -116,7 +118,7 @@ def run_master_analysis(ticker):
     except Exception as e:
         print(f"Backtest error: {type(e).__name__} - {e}")
         results['backtest'] = 'ERROR'
-    
+
     # ==========================================================================
     # 3. Run risk_metrics.py
     # ==========================================================================
@@ -124,25 +126,26 @@ def run_master_analysis(ticker):
     try:
         result = subprocess.run(
             [sys.executable, "risk_metrics.py", ticker],
-            capture_output=True, text=True, cwd=".", timeout=120
+            capture_output=True, text=True, cwd=".", timeout=120,
+            check=False
         )
         print(result.stdout)
-        
+
         if "RISK RATING:" in result.stdout:
             match = re.search(r'RISK RATING: (.+)', result.stdout)
             if match:
                 results['risk'] = match.group(1)
-        
+
         # Parse Sharpe
         sharpe_match = re.search(r'Sharpe Ratio: ([\d.]+)', result.stdout)
         if sharpe_match:
             results['sharpe'] = float(sharpe_match.group(1))
-        
+
         # Parse max drawdown
         dd_match = re.search(r'Max Drawdown: ([\d.-]+)%', result.stdout)
         if dd_match:
             results['max_dd'] = float(dd_match.group(1))
-        
+
     except FileNotFoundError as e:
         print(f"Risk metrics error: Script not found - {e}")
         results['risk'] = 'ERROR'
@@ -152,7 +155,7 @@ def run_master_analysis(ticker):
     except Exception as e:
         print(f"Risk metrics error: {type(e).__name__} - {e}")
         results['risk'] = 'ERROR'
-    
+
     # ==========================================================================
     # 4. Run sector_comparison.py
     # ==========================================================================
@@ -160,7 +163,8 @@ def run_master_analysis(ticker):
     try:
         result = subprocess.run(
             [sys.executable, "sector_comparison.py", ticker, "--peers", "MSFT", "GOOGL", "META"],
-            capture_output=True, text=True, cwd=".", timeout=120
+            capture_output=True, text=True, cwd=".", timeout=120,
+            check=False
         )
         print(result.stdout)
     except FileNotFoundError as e:
@@ -169,7 +173,7 @@ def run_master_analysis(ticker):
         print(f"Sector comparison error: Script timed out")
     except Exception as e:
         print(f"Sector comparison error: {type(e).__name__} - {e}")
-    
+
     # ==========================================================================
     # 5. Run news_sentiment.py
     # ==========================================================================
@@ -177,7 +181,8 @@ def run_master_analysis(ticker):
     try:
         result = subprocess.run(
             [sys.executable, "news_sentiment.py", ticker],
-            capture_output=True, text=True, cwd=".", timeout=60
+            capture_output=True, text=True, cwd=".", timeout=60,
+            check=False
         )
         print(result.stdout)
     except FileNotFoundError as e:
@@ -186,7 +191,7 @@ def run_master_analysis(ticker):
         print(f"News sentiment error: Script timed out")
     except Exception as e:
         print(f"News sentiment error: {type(e).__name__} - {e}")
-    
+
     # ==========================================================================
     # 6. Kelly Criterion position sizing
     # ==========================================================================
@@ -194,7 +199,8 @@ def run_master_analysis(ticker):
     try:
         result = subprocess.run(
             [sys.executable, "kelly_sizer.py", ticker],
-            capture_output=True, text=True, cwd=".", timeout=60
+            capture_output=True, text=True, cwd=".", timeout=60,
+            check=False
         )
         print(result.stdout)
     except FileNotFoundError as e:
@@ -203,7 +209,7 @@ def run_master_analysis(ticker):
         print(f"Kelly sizer error: Script timed out")
     except Exception as e:
         print(f"Kelly sizer error: {type(e).__name__} - {e}")
-    
+
     # ==========================================================================
     # 7. Macro economic analysis
     # ==========================================================================
@@ -211,7 +217,8 @@ def run_master_analysis(ticker):
     try:
         result = subprocess.run(
             [sys.executable, "macro_analysis.py"],
-            capture_output=True, text=True, cwd=".", timeout=120
+            capture_output=True, text=True, cwd=".", timeout=120,
+            check=False
         )
         print(result.stdout)
     except FileNotFoundError as e:
@@ -220,7 +227,7 @@ def run_master_analysis(ticker):
         print(f"Macro analysis error: Script timed out")
     except Exception as e:
         print(f"Macro analysis error: {type(e).__name__} - {e}")
-    
+
     # ==========================================================================
     # 8. Get earnings context
     # ==========================================================================
@@ -229,13 +236,13 @@ def run_master_analysis(ticker):
         import yfinance as yf
         stock = yf.Ticker(ticker)
         info = stock.info
-        
+
         print(f"\nEARNINGS CONTEXT:")
-        if 'trailingPE' in info and info['trailingPE']:
+        if info.get('trailingPE'):
             print(f"  Trailing P/E: {info['trailingPE']:.2f}")
-        if 'forwardPE' in info and info['forwardPE']:
+        if info.get('forwardPE'):
             print(f"  Forward P/E: {info['forwardPE']:.2f}")
-        if 'marketCap' in info and info['marketCap']:
+        if info.get('marketCap'):
             print(f"  Market Cap: ${info['marketCap']/1e9:.2f}B")
         if 'recommendationKey' in info:
             print(f"  Analyst Consensus: {info['recommendationKey']}")
@@ -243,29 +250,29 @@ def run_master_analysis(ticker):
         print(f"  Earnings context error: Missing key {e}")
     except Exception as e:
         print(f"  Earnings context error: {type(e).__name__} - {e}")
-    
+
     # ==========================================================================
     # OUTPUT STRUCTURED DATA FOR AI SYNTHESIS
     # ==========================================================================
     print(f"\n{'='*80}")
     print(f"STRUCTURED DATA OUTPUT (for AI deep analysis)")
     print(f"{'='*80}")
-    
+
     print(f"\nSIGNAL SUMMARY:")
     print(f"  Forecast Signal: {results.get('forecast_signal', 'N/A')}")
     print(f"    - Prophet Change: {results.get('prophet_change', 'N/A')}%")
     print(f"    - RSI: {results.get('rsi', 'N/A')}")
     print(f"    - Trend: {results.get('trend', 'N/A')}")
     print(f"    - Uncertainty: {results.get('uncertainty', 'N/A')}%")
-    
+
     print(f"\n  Backtest Conviction: {results.get('backtest', 'N/A')}")
     print(f"    - Alpha vs Buy&Hold: {results.get('alpha_vs_buy_hold', 'N/A')}%")
     print(f"    - Sharpe: {results.get('backtest_sharpe', 'N/A')}")
-    
+
     print(f"\n  Risk Rating: {results.get('risk', 'N/A')}")
     print(f"    - Sharpe: {results.get('sharpe', 'N/A')}")
     print(f"    - Max Drawdown: {results.get('max_dd', 'N/A')}%")
-    
+
     print(f"\n{'='*80}")
     print(f"DEEP THINKING SYNTHESIS REQUIRED")
     print(f"{'='*80}")
@@ -276,7 +283,7 @@ def run_master_analysis(ticker):
     print(f"4. Do websearch for recent news/events")
     print(f"5. Synthesize decisive BUY/SELL/HOLD with confidence")
     print(f"6. NO disclaimers, NO weak language\n")
-    
+
     return results
 
 if __name__ == "__main__":

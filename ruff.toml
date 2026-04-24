@@ -1,0 +1,43 @@
+# Ruff linting configuration for professional-quant scripts
+# Focus: security, exception handling, subprocess safety
+
+# Target Python 3.10+
+target-version = "py310"
+
+# Line length consistent with existing codebase
+line-length = 120
+
+[lint]
+# Enable rule categories:
+#   E    - pycodestyle errors (E722 = bare except)
+#   W    - pycodestyle warnings
+#   BLE  - blind exception handling (BLE001 = except Exception)
+#   S    - flake8-bandit security (S501 = CERT_NONE, S404 = subprocess)
+#   PLW  - pylint warnings (PLW1510 = subprocess without timeout)
+#   SIM  - simplify (code quality)
+#   RUF  - ruff-specific rules
+select = ["E", "W", "BLE", "S", "PLW", "SIM", "RUF"]
+
+# Ignore rules that are too noisy for this CLI script codebase
+ignore = [
+    "BLE001",  # blind except Exception (intentional fallbacks after specific handlers in CLI scripts)
+    "S101",    # Use of assert (fine in scripts)
+    "S602",    # subprocess with shell=False (we use list form, this flags incorrectly)
+    "S603",    # subprocess call (too noisy - we use subprocess.run with list args)
+    "S607",    # subprocess with partial executable path (fine for sys.executable)
+    "S310",    # audit URL open (legitimate use for SEC.gov/yfinance data fetching)
+    "S404",    # subprocess module import (legitimate use for orchestrating scripts)
+    "T201",    # print() statements (entire codebase is CLI output)
+    "S311",    # Standard pseudo-random generators (not used for crypto)
+    "S110",    # try-except-pass (intentional in CLI scripts for optional data)
+    "S112",    # try-except-continue (intentional in CLI scripts for optional data)
+    "PLW0602", # global variable not assigned (too noisy)
+    "SIM108",  # ternary operator suggestion (style preference)
+    "SIM102",  # collapsible if (style preference)
+]
+
+[lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[lint.flake8-bandit]
+# Allow subprocess module usage but flag missing timeouts and SSL issues

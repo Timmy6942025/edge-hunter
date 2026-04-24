@@ -8,37 +8,44 @@ import argparse
 import numpy as np
 import pandas as pd
 import yfinance as yf
-import sys, os
+import sys
+import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import flatten_yf_data, extract_price_data, safe_float
 from datetime import datetime, timedelta
 
 def analyze_earnings_quality(ticker):
     """Comprehensive earnings quality analysis"""
-    
+
     print(f"\n{'='*70}")
     print(f"EARNINGS QUALITY ANALYSIS: {ticker}")
     print(f"{'='*70}")
-    
+
     try:
         stock = yf.Ticker(ticker)
         info = stock.info
-        
+
         # EARNINGS HISTORY
         print(f"\n{'─'*70}")
         print(f"EARNINGS HISTORY")
         print(f"{'─'*70}")
-        
+
         eps_actual = info.get('trailingEps')
         eps_estimate = info.get('forwardEps')
-        
-        print(f"  Trailing EPS: ${eps_actual:.2f}" if eps_actual else "  Trailing EPS: N/A")
-        print(f"  Forward EPS (est): ${eps_estimate:.2f}" if eps_estimate else "  Forward EPS: N/A")
-        
+
+        if eps_actual:
+            print(f"  Trailing EPS: ${eps_actual:.2f}")
+        else:
+            print(f"  Trailing EPS: N/A")
+        if eps_estimate:
+            print(f"  Forward EPS (est): ${eps_estimate:.2f}")
+        else:
+            print(f"  Forward EPS: N/A")
+
         current_price = info.get('currentPrice') or info.get('regularMarketPrice')
         if eps_actual and current_price:
             print(f"  Implied P/E from trailing EPS: {current_price / eps_actual:.1f}")
-        
+
         # QUARTERLY PERFORMANCE
         try:
             quarterly = stock.quarterly_financials
@@ -46,33 +53,51 @@ def analyze_earnings_quality(ticker):
                 print(f"\n  Recent Quarterly Performance:")
                 print(f"  {'Quarter':<15} {'Revenue':<20} {'Earnings':<20}")
                 print(f"  {'─'*55}")
-                
+
                 for idx in quarterly.columns[:4]:
-                    revenue = quarterly.loc['Total Revenue', idx] if 'Total Revenue' in quarterly.index else 'N/A'
-                    earnings = quarterly.loc['Net Income', idx] if 'Net Income' in quarterly.index else 'N/A'
-                    
-                    rev_str = f"${revenue/1e9:.2f}B" if isinstance(revenue, (int, float)) else str(revenue)[:15]
-                    earn_str = f"${earnings/1e9:.2f}B" if isinstance(earnings, (int, float)) else str(earnings)[:15]
-                    
+                    revenue = (
+                        quarterly.loc['Total Revenue', idx]
+                        if 'Total Revenue' in quarterly.index else 'N/A'
+                    )
+                    earnings = (
+                        quarterly.loc['Net Income', idx]
+                        if 'Net Income' in quarterly.index else 'N/A'
+                    )
+
+                    rev_str = (
+                        f"${revenue/1e9:.2f}B"
+                        if isinstance(revenue, (int, float)) else str(revenue)[:15]
+                    )
+                    earn_str = (
+                        f"${earnings/1e9:.2f}B"
+                        if isinstance(earnings, (int, float)) else str(earnings)[:15]
+                    )
+
                     print(f"  {str(idx)[:12]:<15} {rev_str:<20} {earn_str:<20}")
         except Exception as e:
             print(f"  Could not fetch quarterly data")
-        
+
         # CASH FLOW QUALITY
         print(f"\n{'─'*70}")
         print(f"CASH FLOW QUALITY")
         print(f"{'─'*70}")
-        
+
         try:
             cashflow = stock.cashflow
             if not cashflow.empty:
-                operating_cf = cashflow.loc['Operating Cash Flow'].iloc[0] if 'Operating Cash Flow' in cashflow.index else None
-                net_income = cashflow.loc['Net Income'].iloc[0] if 'Net Income' in cashflow.index else None
-                
+                operating_cf = (
+                    cashflow.loc['Operating Cash Flow'].iloc[0]
+                    if 'Operating Cash Flow' in cashflow.index else None
+                )
+                net_income = (
+                    cashflow.loc['Net Income'].iloc[0]
+                    if 'Net Income' in cashflow.index else None
+                )
+
                 if operating_cf and net_income and net_income > 0:
                     cf_ratio = operating_cf / net_income
                     print(f"  Cash Flow / Net Income Ratio: {cf_ratio:.2f}")
-                    
+
                     if cf_ratio > 1.2:
                         cf_signal = "HIGH QUALITY"
                         print(f"  → EXCELLENT (CF > 120% of NI)")
@@ -91,25 +116,25 @@ def analyze_earnings_quality(ticker):
             else:
                 cf_signal = "N/A"
                 print("  Cash flow data not available")
-        except:
+        except Exception:
             cf_signal = "N/A"
             print("  Could not analyze cash flow")
-        
+
         # REVENUE QUALITY
         print(f"\n{'─'*70}")
         print(f"REVENUE QUALITY")
         print(f"{'─'*70}")
-        
+
         revenue_growth = info.get('revenueGrowth')
         earnings_growth = info.get('earningsGrowth')
-        
+
         if revenue_growth and earnings_growth:
             rev_growth_pct = revenue_growth * 100
             earn_growth_pct = earnings_growth * 100
-            
+
             print(f"  Revenue Growth: {rev_growth_pct:+.1f}%")
             print(f"  Earnings Growth: {earn_growth_pct:+.1f}%")
-            
+
             if earn_growth_pct > rev_growth_pct * 1.5 and earn_growth_pct > 30:
                 rev_signal = "POTENTIAL AGGRESSIVE ACCRUALS"
                 print(f"  → ⚠️ {rev_signal}")
@@ -125,17 +150,17 @@ def analyze_earnings_quality(ticker):
         else:
             rev_signal = "N/A"
             print("  Growth data not available")
-        
+
         # MARGINS
         print(f"\n{'─'*70}")
         print(f"MARGIN TRENDS")
         print(f"{'─'*70}")
-        
+
         profit_margin = info.get('profitMargins')
-        
+
         if profit_margin:
             print(f"  Current Profit Margin: {profit_margin*100:.1f}%")
-            
+
             if profit_margin > 0.20:
                 margin_signal = "EXCELLENT"
             elif profit_margin > 0.15:
@@ -146,22 +171,22 @@ def analyze_earnings_quality(ticker):
                 margin_signal = "THIN MARGINS"
             else:
                 margin_signal = "LOSING MONEY"
-            
+
             print(f"  → Margin Signal: {margin_signal}")
         else:
             margin_signal = "N/A"
             print("  Margin data not available")
-        
+
         # EARNINGS MOMENTUM
         print(f"\n{'─'*70}")
         print(f"EARNINGS MOMENTUM")
         print(f"{'─'*70}")
-        
+
         qoq_growth = info.get('earningsQuarterlyGrowthGrowth') or info.get('earningsQuarterlyGrowth')
-        
+
         if qoq_growth:
             print(f"  Quarterly Earnings Growth: {qoq_growth*100:+.1f}%")
-            
+
             if qoq_growth > 0.20:
                 momentum_signal = "ACCELERATING"
                 print(f"  → ✅ {momentum_signal}")
@@ -174,69 +199,69 @@ def analyze_earnings_quality(ticker):
         else:
             momentum_signal = "N/A"
             print("  Earnings momentum data not available")
-        
+
         # RISK FACTORS
         print(f"\n{'─'*70}")
         print(f"EARNINGS RISK FACTORS")
         print(f"{'─'*70}")
-        
+
         risks = []
         pe_ratio = info.get('trailingPE')
-        
+
         if pe_ratio and pe_ratio > 40:
             risks.append("High P/E - vulnerable to earnings disappointment")
-        
+
         if profit_margin and profit_margin < 0.05:
             risks.append("Thin margins - any cost increase hurts badly")
-        
+
         if cf_signal == "WEAK":
             risks.append("Weak cash flow - earnings may not be sustainable")
-        
+
         if rev_signal == "POTENTIAL AGGRESSIVE ACCRUALS":
             risks.append("Earnings outpacing revenue - possible quality issue")
-        
+
         if earnings_growth and earnings_growth < 0:
             risks.append("Earnings declining - could miss future estimates")
-        
+
         if risks:
             print("  ⚠️ Risk Flags:")
             for risk in risks:
                 print(f"    • {risk}")
         else:
             print("  ✅ No major risk flags identified")
-        
+
         # QUALITY SCORE
         print(f"\n{'='*70}")
         print(f"EARNINGS QUALITY VERDICT")
         print(f"{'='*70}")
-        
+
         quality_score = 0
-        
+
         if cf_signal == "HIGH QUALITY":
             quality_score += 2
         elif cf_signal == "GOOD":
             quality_score += 1
         elif cf_signal == "WEAK":
             quality_score -= 2
-        
+
         if rev_signal == "HEALTHY GROWTH":
             quality_score += 2
         elif rev_signal in ["MARGIN PRESSURE", "CONTRACTING"]:
             quality_score -= 1
-        
+
         if margin_signal in ["EXCELLENT", "GOOD"]:
             quality_score += 1
         elif margin_signal == "LOSING MONEY":
             quality_score -= 2
-        
+
         if momentum_signal == "ACCELERATING":
             quality_score += 1
         elif momentum_signal == "DECELERATING":
             quality_score -= 1
-        
+
         max_score = 7
         pct_score = (quality_score / max_score) * 100
-        
+
         print(f"\n  Quality Components:")
         print(f"    Cash Flow: {cf_signal}")
         print(f"    Revenue: {rev_signal}")
@@ -244,7 +269,7 @@ def analyze_earnings_quality(ticker):
         print(f"    Momentum: {momentum_signal}")
         print(f"  ─────────────────────────────────────────")
         print(f"  TOTAL QUALITY SCORE: {quality_score:+.1f} / {max_score} ({pct_score:+.0f}%)")
-        
+
         print(f"\n{'─'*70}")
         if pct_score >= 50:
             verdict = "HIGH QUALITY EARNINGS"
@@ -262,9 +287,9 @@ def analyze_earnings_quality(ticker):
             verdict = "LOW QUALITY EARNINGS"
             print(f"VERDICT: {verdict}")
             print(f"  → Significant earnings quality issues - avoid")
-        
+
         print(f"{'='*70}\n")
-        
+
         return {
             "cf_signal": cf_signal,
             "rev_signal": rev_signal,
@@ -275,7 +300,7 @@ def analyze_earnings_quality(ticker):
             "verdict": verdict,
             "risks": risks
         }
-        
+
     except Exception as e:
         print(f"❌ Error in earnings quality analysis: {e}")
         import traceback
