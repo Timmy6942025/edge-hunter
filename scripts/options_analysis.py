@@ -25,12 +25,12 @@ def analyze_options(ticker):
         current_price = info.get('currentPrice') or info.get('regularMarketPrice') or info.get('navPrice')
         if not current_price:
             hist = stock.history(period="1d")
-            current_price = hist['Close'].iloc[-1] if not hist.empty else None
+            current_price = float(hist['Close'].iloc[-1]) if not hist.empty else None
         
         if not current_price:
             print("Could not get current price. Trying historical data...")
             hist = stock.history(period="5d")
-            current_price = hist['Close'].iloc[-1] if not hist.empty else None
+            current_price = float(hist['Close'].iloc[-1]) if not hist.empty else None
         
         if not current_price:
             print("❌ Could not determine current price. Options analysis unavailable.")

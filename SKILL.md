@@ -143,28 +143,28 @@ python3 scripts/sector_comparison.py TICKER --peers PEER1,PEER2
 python3 scripts/news_sentiment.py TICKER
 python3 scripts/macro_analysis.py
 
-# Pro-Grade Additions
+# Pro-Grade Analysis
 python3 scripts/options_analysis.py TICKER          # IV, put/call ratio, gamma
 python3 scripts/multi_timeframe.py TICKER           # Daily/Weekly/Monthly alignment
 python3 scripts/fundamentals_screen.py TICKER       # P/E, P/B, debt/equity, margins
 python3 scripts/earnings_quality.py TICKER          # Beat/miss rates, surprise analysis
 
+# Institutional-Grade Analysis
+python3 scripts/portfolio_optimizer.py TICKER1 TICKER2 TICKER3  # Efficient frontier, max Sharpe, risk parity (2+ tickers)
+python3 scripts/correlation_matrix.py TICKER1 TICKER2 TICKER3  # Pairwise correlations, diversification (2+ tickers)
+python3 scripts/sector_rotation.py                  # Sector momentum, rotation signals (no args)
+python3 scripts/insider_tracker.py TICKER           # Insider ownership, sentiment signals
+python3 scripts/short_squeeze.py TICKER             # Short interest, squeeze scoring
+python3 scripts/technical_alerts.py TICKER          # Breakout/breakdown, RSI alerts
+python3 scripts/multi_stock_compare.py TICKER1 TICKER2 TICKER3  # Side-by-side comparison (2+ tickers)
+python3 scripts/regime_detector.py TICKER           # Bull/bear/sideways regime
+python3 scripts/fibonacci_levels.py TICKER          # Retracement/extension levels
+python3 scripts/volume_profile.py TICKER            # VWAP, POC, value area
+
+# Position Sizing
+python3 scripts/kelly_sizer.py TICKER               # Kelly Criterion position sizing
+
 # Final Synthesis
-python3 scripts/master_analysis.py TICKER
-```
-
----
-ORIGINAL_PLACEHOLDER
-
-Run in ORDER - wait for each to complete:
-```bash
-python3 scripts/fetch_data.py TICKER
-python3 scripts/forecast.py TICKER
-python3 scripts/backtest.py TICKER
-python3 scripts/risk_metrics.py TICKER
-python3 scripts/sector_comparison.py TICKER --peers PEER1,PEER2
-python3 scripts/news_sentiment.py TICKER
-python3 scripts/macro_analysis.py
 python3 scripts/master_analysis.py TICKER
 ```
 
@@ -249,10 +249,39 @@ Using `references/deep_analysis.md` as your guide, write comprehensive analysis 
 | Price Prediction | `forecast.py` | Prophet + technical signals |
 | Strategy Backtesting | `backtest.py` | Momentum, RSI, SMA strategies |
 | Risk Management | `risk_metrics.py` | Sharpe, Sortino, VaR, Beta |
-| Portfolio Optimization | `portfolio_optim.py` | Max Sharpe, Min Vol, HRP |
+| Portfolio Optimization | `portfolio_optimizer.py` | Max Sharpe, Min Vol, HRP |
 | Sector Comparison | `sector_comparison.py` | Relative strength vs peers |
 | Sentiment Analysis | `news_sentiment.py` | Bullish/bearish scoring |
 | Macro Analysis | `macro_analysis.py` | VIX, rates, dollar, inflation |
+| Options Analysis | `options_analysis.py` | IV, put/call ratio, gamma exposure |
+| Multi-Timeframe | `multi_timeframe.py` | Daily/Weekly/Monthly alignment |
+| Fundamentals Screening | `fundamentals_screen.py` | P/E, P/B, debt/equity, margins |
+| Earnings Quality | `earnings_quality.py` | Beat/miss rates, surprise analysis |
+| Portfolio Optimization | `portfolio_optimizer.py` | MVO, efficient frontier, risk parity |
+| Correlation Analysis | `correlation_matrix.py` | Pairwise correlations, diversification |
+| Sector Rotation | `sector_rotation.py` | Sector momentum, rotation signals |
+| Insider Tracking | `insider_tracker.py` | Ownership structure, sentiment |
+| Short Squeeze | `short_squeeze.py` | Short interest, squeeze scoring |
+| Technical Alerts | `technical_alerts.py` | Breakout/breakdown detection |
+| Multi-Stock Compare | `multi_stock_compare.py` | Side-by-side comparison, ranking |
+| Regime Detection | `regime_detector.py` | Bull/bear/sideways detection |
+| Fibonacci Levels | `fibonacci_levels.py` | Retracement/extension levels |
+| Volume Profile | `volume_profile.py` | VWAP, POC, value area |
+| Position Sizing | `options_analysis.py` | IV, put/call ratio, gamma exposure |
+| `multi_timeframe.py` | Daily/Weekly/Monthly trend alignment |
+| `fundamentals_screen.py` | P/E, P/B, debt/equity, margins screening |
+| `earnings_quality.py` | Beat/miss rates, surprise analysis |
+| `portfolio_optimizer.py` | MVO, efficient frontier, max Sharpe, risk parity |
+| `correlation_matrix.py` | Pairwise correlations, diversification analysis |
+| `sector_rotation.py` | Sector momentum, rotation signals |
+| `insider_tracker.py` | Insider ownership, sentiment signals |
+| `short_squeeze.py` | Short interest, squeeze potential scoring |
+| `technical_alerts.py` | Breakout/breakdown detection, RSI alerts |
+| `multi_stock_compare.py` | Side-by-side ticker comparison, ranking |
+| `regime_detector.py` | Bull/bear/sideways market detection |
+| `fibonacci_levels.py` | Fibonacci retracement/extension levels |
+| `volume_profile.py` | VWAP, POC, value area analysis |
+| `kelly_sizer.py` | Kelly Criterion position sizing |
 | Master Analysis | `master_analysis.py` | Aggregated final verdict |
 
 ---
@@ -268,10 +297,24 @@ All scripts use `datetime.now()` - NEVER hallucinate dates.
 | `forecast.py` | Prophet forecast + RSI/MACD/BB |
 | `backtest.py` | Multiple strategies with strict quant rules |
 | `risk_metrics.py` | Comprehensive risk profile |
-| `portfolio_optim.py` | Portfolio optimization (Max Sharpe, Min Vol, HRP) |
+| `portfolio_optimizer.py` | Portfolio optimization (Max Sharpe, Min Vol, HRP) |
 | `sector_comparison.py` | Compare to sector ETF and peers |
 | `macro_analysis.py` | Economic context (VIX, TLT, GLD, UUP) |
 | `news_sentiment.py` | News sentiment scoring |
+| `options_analysis.py` | IV, put/call ratio, gamma exposure |
+| `multi_timeframe.py` | Daily/Weekly/Monthly trend alignment |
+| `fundamentals_screen.py` | P/E, P/B, debt/equity, margins screening |
+| `earnings_quality.py` | Beat/miss rates, surprise analysis |
+| `portfolio_optimizer.py` | MVO, efficient frontier, max Sharpe, risk parity |
+| `correlation_matrix.py` | Pairwise correlations, diversification analysis |
+| `sector_rotation.py` | Sector momentum, rotation signals |
+| `insider_tracker.py` | Insider ownership, sentiment signals |
+| `short_squeeze.py` | Short interest, squeeze potential scoring |
+| `technical_alerts.py` | Breakout/breakdown detection, RSI alerts |
+| `multi_stock_compare.py` | Side-by-side ticker comparison, ranking |
+| `regime_detector.py` | Bull/bear/sideways market detection |
+| `fibonacci_levels.py` | Fibonacci retracement/extension levels |
+| `volume_profile.py` | VWAP, POC, value area analysis |
 | `kelly_sizer.py` | Kelly Criterion position sizing |
 
 ---

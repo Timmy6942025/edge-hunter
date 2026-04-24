@@ -46,7 +46,7 @@ def analyze_multitimeframe(ticker):
             sma_50 = close.rolling(window=50).mean()
             sma_200 = close.rolling(window=200).mean()
             
-            current_price = close.iloc[-1]
+            current_price = float(close.iloc[-1])
             sma20_val = sma_20.iloc[-1] if not pd.isna(sma_20.iloc[-1]) else 0
             sma50_val = sma_50.iloc[-1] if not pd.isna(sma_50.iloc[-1]) else 0
             sma200_val = sma_200.iloc[-1] if not pd.isna(sma_200.iloc[-1]) else 0

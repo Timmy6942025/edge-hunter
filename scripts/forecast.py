@@ -124,15 +124,15 @@ def forecast_stock(ticker, periods=30):
     print(f"  SMA 200: ${sma_200:.2f} {'(Price > SMA200)' if current_price > sma_200 else '(Price < SMA200)'}")
     print(f"  BB Upper: ${float(latest['BB_upper']):.2f}")
     print(f"  BB Lower: ${float(latest['BB_lower']):.2f}")
-    print(f"  Price vs BB: {((current_price - float(latest['BB_lower']))/(float(latest['BB_upper']) - float(latest['BB_lower']))*100:.1f}% between bands")
+    print(f"  Price vs BB: {((current_price - float(latest['BB_lower']))/(float(latest['BB_upper']) - float(latest['BB_lower']))*100):.1f}% between bands")
     
     # Trend analysis
     sma_50_slope = ((df['SMA_50'].iloc[-1] - df['SMA_50'].iloc[-5]) / df['SMA_50'].iloc[-5]) * 100 if len(df) >= 5 else 0
     trend = "UP" if sma_50_slope > 0 else "DOWN"
     print(f"\nTREND ANALYSIS:")
     print(f"  SMA 50 Slope (5-day): {sma_50_slope:+.2f}% → {trend}")
-    print(f"  Price vs SMA 50: {((current_price/sma_50 - 1)*100:+.2f}%")
-    print(f"  Price vs SMA 200: {((current_price/sma_200 - 1)*100:+.2f}%")
+    print(f"  Price vs SMA 50: {((current_price/sma_50 - 1)*100):+.2f}%")
+    print(f"  Price vs SMA 200: {((current_price/sma_200 - 1)*100):+.2f}%")
     
     print(f"\n{'='*70}")
     print(f"DATA OUTPUT (for master_analysis.py synthesis):")
