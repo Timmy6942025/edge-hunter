@@ -1,5 +1,7 @@
 # Free Data Sources (No API Key)
 
+> **Role in this skill**: Appendix — reference for what data is available and its limitations. Data is an input, not the analysis. For how to find information beyond what these sources provide (qualitative research, primary sources, etc.), see `references/research_for_edge.md`.
+
 ## yfinance
 - Fetch historical stock data from Yahoo Finance
 - No API key required
