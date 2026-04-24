@@ -306,17 +306,35 @@ All scripts use `datetime.now()` - NEVER hallucinate dates.
 
 ## Code Quality & Linting
 
-All scripts are linted with **ruff** using a security-focused configuration (`ruff.toml`).
+All scripts are linted and formatted with **ruff** using a security-focused configuration (`ruff.toml`).
+
+### Local Commands
 
 ```bash
 # Run lint check
 cd ~/.agents/skills/professional-quant && ruff check scripts/
 
-# Auto-fix trivial issues
+# Auto-fix trivial lint issues
 ruff check scripts/ --fix
+
+# Check formatting (dry run)
+ruff format --check scripts/
+
+# Apply formatting
+ruff format scripts/
 ```
 
-Key rules enforced:
+### CI Workflow
+
+A GitHub Actions workflow (`.github/workflows/lint.yml`) runs automatically on every push and pull request to `main`:
+
+- **`ruff check scripts/`** — Lint check (fails on any violation)
+- **`ruff format --check scripts/`** — Format check (fails if any file needs reformatting)
+
+Both steps must pass before a PR can be merged. If the CI fails on formatting, run `ruff format scripts/` locally and commit the result.
+
+### Key Rules Enforced
+
 - **E722**: No bare `except:` (must use `except Exception:`)
 - **BLE001**: Blind exception handling (ignored — intentional fallbacks in CLI scripts)
 - **PLW1510**: `subprocess.run()` must include `check=False` and `timeout`
@@ -325,6 +343,7 @@ Key rules enforced:
 - **RUF059**: Unused variables
 - **E741**: Ambiguous variable names (e.g., `l` → `lvl`)
 - **PLW2901**: Loop variable overwrite
+- **Formatting**: All scripts must pass `ruff format` (consistent style, indentation, line wrapping)
 
 ---
 

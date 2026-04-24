@@ -55,17 +55,25 @@ The agent will automatically use the skill to produce 500+ words of deep analysi
 
 ## Code Quality
 
-All scripts pass `ruff` linting with a security-focused configuration.
+All scripts pass `ruff` linting and formatting with a security-focused configuration.
 
 ```bash
-# Check for issues
+# Check for lint issues
 cd ~/.agents/skills/professional-quant && ruff check scripts/
 
-# Auto-fix trivial issues
+# Auto-fix trivial lint issues
 ruff check scripts/ --fix
+
+# Check formatting (dry run)
+ruff format --check scripts/
+
+# Apply formatting
+ruff format scripts/
 ```
 
-Key rules: no bare `except:`, `subprocess.run()` must have `check=False` and `timeout`, line length ≤ 120, no unused variables.
+A **CI workflow** (`.github/workflows/lint.yml`) runs both `ruff check` and `ruff format --check` on every push and PR to `main`. Both must pass before merging.
+
+Key rules: no bare `except:`, `subprocess.run()` must have `check=False` and `timeout`, line length ≤ 120, no unused variables, all scripts must pass `ruff format`.
 
 ## Repository
 https://github.com/Timmy6942025/professional-quant
