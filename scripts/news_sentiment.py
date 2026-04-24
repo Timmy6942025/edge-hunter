@@ -5,6 +5,9 @@ Uses yfinance news aggregation for basic sentiment scoring
 """
 import yfinance as yf
 import re
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from utils import flatten_yf_data, extract_price_data, safe_float
 from datetime import datetime
 
 def analyze_news_sentiment(ticker):

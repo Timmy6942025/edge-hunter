@@ -8,6 +8,9 @@ import subprocess
 import sys
 import re
 import argparse
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from utils import flatten_yf_data, extract_price_data, safe_float
 from datetime import datetime
 
 def run_master_analysis(ticker):
