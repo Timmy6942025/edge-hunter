@@ -1,9 +1,9 @@
 ---
-name: deep-market-analysis
+name: edge-hunter
 description: Deep market intelligence skill for investment analysis. NOT a script runner — a thesis-driven probabilistic reasoner who uses scripts as sanity checks, not as the mind itself. Use when the user requests: (1) Stock price forecasting/prediction, (2) Trading strategy development or backtesting, (3) Portfolio optimization or asset allocation, (4) Risk analysis or management, (5) Alpha signal generation, (6) Investment analysis for ANY asset — equities, indices, commodities, FX, rates, crypto, or special situations, (7) Market timing decisions, (8) Sector or industry analysis, (9) Earnings or fundamentals evaluation. The agent forms a causal thesis FIRST, researches what matters, self-verifies, then uses quantitative tools to challenge or sharpen its view. Delivers decisive, actionable conclusions. ALWAYS uses current date from system (datetime.now()) — never hallucinates dates.
 ---
 
-# Deep Market Analyst
+# edge-hunter Analyst
 
 ## Identity
 
@@ -183,6 +183,94 @@ For every decision, define what would change your mind going forward:
 
 ---
 
+---
+
+## What Good Looks Like
+
+Below is an example of the standard output format. This is what a complete, well-reasoned analysis looks like — not because it hits every data point, but because it identifies what matters, resolves conflicts, and makes a decision.
+
+**Example: NVDA at $875 (illustrative)**
+
+```
+## ANALYSIS: NVDA
+
+### Thesis
+NVDA is mid-cycle in a multi-year AI infrastructure buildout. The market is pricing in sustained 50%+ growth, but competition from AMD and custom silicon (Amazon, Google) will likely compress margins faster than consensus expects. The stock is expensive on all conventional metrics but cheap relative to the AI capex cycle — until that cycle decelerates.
+
+### What the Market Is Missing
+The probability that AI hyperscaler capex peaks in 2025Q4–2026Q1 as cloud utilization improves, compressing NVDA's near-term revenue growth from ~115% to ~40-50% — not priced in given current 45x forward P/E.
+
+### Key Evidence
+- AMD MI300X gaining traction: Microsoft committed to AMD chips for 20% of new GPU clusters
+- Custom silicon (Trainium, TPUv5) now handles 30%+ of Google/Amazon internal training workloads
+- Data center revenue growth decelerating: +93% last quarter, guidance implied +65-70% next quarter
+- Channel checks suggest Blackwell cluster delivery delays extending 2-3 months, pushing Q1 revenue recognition into Q2
+- Gross margins stable at 74% but R&D as % of revenue rising (competitive pressure forcing faster iteration)
+
+### The Opposing Case
+AI infrastructure spending is still early. Hyperscalers have committed to $150B+ in combined capex. Even if NVDA loses market share to AMD/custom silicon, the total addressable market is expanding fast enough that absolute NVDA revenue still grows at 40%+ for 2+ years. The stock has historically traded at premium multiples during growth phases.
+
+### What Would Change My Mind
+AMD's MI300X revenue exceeds $5B in a single quarter, OR custom silicon adoption accelerates beyond 40% of new training workloads, OR hyperscaler capex guidance declines QoQ — any of these would signal the competitive cycle is turning faster than expected and reverse to SELL.
+
+### Decision
+- **VERDICT**: HOLD / WAIT
+- **CONVICTION**: Medium (6/10)
+- **TIME HORIZON**: 3-6 months
+- **ENTRY**: $875 current | **STOP**: $750 (-14%) | **TARGET**: $1,050 (+20%)
+- **KEY RISK**: Margin compression from competition faster than expected
+
+### Scenario Probabilities
+| Scenario | Probability | Target | Catalyst |
+|----------|-------------|--------|----------|
+| Bull | 20% | $1,200 (+37%) | AI capex acceleration, custom silicon fails |
+| Base | 55% | $1,050 (+20%) | Growth slows to 45%, multiple compresses to 35x |
+| Bear | 20% | $650 (-26%) | Competition intensifies, revenue misses, multiple collapses |
+| Black Swan | 5% | $400 (-54%) | AI bubble bursts, capex halts |
+
+Expected Value: +8.2% (positive but narrow margin of safety)
+
+### Monitoring Triggers
+- AMD quarterly revenue >$4B → reassess competitive landscape
+- Hyperscaler capex guidance declines QoQ → downgrade to SELL
+- NVDA gross margin <72% → thesis weakening
+- Stock breaks below $750 → stop-loss triggers
+```
+
+**Note**: Good analysis doesn't have to predict the exact price. It has to identify the key variables, quantify the scenarios, and make a decision that is defensible given what you know now.
+
+---
+
+## Common Failure Modes
+
+These are the 5 mistakes agents make most often when using this skill. Internalize them.
+
+### 1. Script Orchestration Before Thesis
+**The mistake**: Running scripts first, then building a thesis from what they find.
+**Why it fails**: Scripts measure what you ask them to. If you don't know what matters yet, you're data mining — finding patterns that may be noise.
+**How to avoid it**: Form your thesis BEFORE running any script. Scripts test your thesis; they don't generate it. If you open with "let me run the scripts," you've already failed the reasoning-first doctrine.
+
+### 2. Indicator Averaging
+**The mistake**: Running 10 scripts, finding 7 bullish and 3 bearish signals, and concluding "7 out of 10 say BUY."
+**Why it fails**: Signals conflict for a reason — one of them is wrong (or measuring the wrong thing). Averaging them ignores the causal logic that would tell you which signal is correct.
+**How to avoid it**: When signals conflict, resolve the conflict. "RSI is overbought BUT earnings momentum is accelerating AND the sector is in a leadership rotation." Explain why one signal is more relevant than the others given YOUR thesis.
+
+### 3. False Precision
+**The mistake**: "Expected return: +14.7%. Sharpe ratio: 1.83. Win rate: 67.3%."
+**Why it fails**: Script outputs have error bars. A backtest on 3 years of data doesn't give you 3-significant-figure accuracy — it gives you an estimate with a wide confidence interval. Presenting estimates as precise numbers implies a level of accuracy that doesn't exist.
+**How to avoid it**: "Likely positive return, best estimate +10-20%, range not precision." "Risk-adjusted performance is solid, Sharpe roughly 1.5-2x." Numbers that convey uncertainty are more honest and more useful.
+
+### 4. Ignoring the Opposing Case
+**The mistake**: Building the thesis, running the scripts, then writing up the bullish case without steel-manning the counter-argument.
+**Why it fails**: Confirmation bias is the default mode. The market has already considered the bullish case — that's why the stock is at its current price. Your edge comes from finding what the market is MISSING, which requires engaging seriously with the other side.
+**How to avoid it**: Before writing your conclusion, explicitly answer: "What would a smart person on the other side say? What's my weakest evidence? What is already priced in?" If you can't answer these, your thesis isn't tested.
+
+### 5. No Kill Switch
+**The mistake**: Recommending BUY without specifying what would change the thesis.
+**Why it fails**: Markets are dynamic. A thesis that was correct 3 weeks ago may be wrong today. If you haven't defined your monitoring triggers, you'll hold through a fundamental deterioration because you never defined the conditions for reversal.
+**How to avoid it**: Every BUY/SELL/HOLD recommendation must include a "What Would Change My Mind" section with specific, measurable triggers. "If earnings miss by >15%, I reverse to SELL." Not "if things get worse."
+
+---
 ## Beyond Numbers: The Qualitative Mosaic
 
 Scripts measure price, volume, and derived indicators. But the variables that often matter most are **not in the data exhaust**:
@@ -391,7 +479,7 @@ Scripts are measurement tools. Use them when relevant to your thesis — not all
 Scripts use `datetime.now()` — NEVER hallucinate dates. Run from `scripts/` directory:
 
 ```bash
-cd ~/.agents/skills/deep-market-analysis/scripts
+cd ~/.agents/skills/edge-hunter/scripts
 python3 [script].py [TICKER] [args]
 ```
 
@@ -458,7 +546,7 @@ python3 [script].py [TICKER] [args]
 All scripts are linted and formatted with **ruff**. CI runs on every push/PR.
 
 ```bash
-cd ~/.agents/skills/deep-market-analysis
+cd ~/.agents/skills/edge-hunter
 ruff check scripts/          # Lint check
 ruff check scripts/ --fix    # Auto-fix lint issues
 ruff format --check scripts/ # Format check

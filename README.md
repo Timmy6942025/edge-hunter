@@ -1,12 +1,68 @@
-# Deep Market Analysis Skill
+# edge-hunter skill
 
 A deep market intelligence skill for AI agents. **Thesis-driven analysis, not script orchestration.** Decisive conclusions, no disclaimers.
 
-**Always uses current date automatically** (`datetime.now()`) — never hallucinates dates. **Full yfinance access** — 24 scripts powered by free, no-API-key market data.
+A deep market intelligence skill for AI agents. **Thesis-driven analysis, not script orchestration.** Decisive conclusions, no disclaimers.
+
+**Always uses current date automatically** (`datetime.now()`) — never hallucinates dates. **Full yfinance access** — 26 scripts powered by free, no-API-key market data.
 
 ---
 
-## What This Skill Does
+## What This Skill Does---
+
+## Quick Start Example
+
+Here's what the output looks like — decisive, structured, actionable:
+
+```
+## ANALYSIS: AAPL
+
+### Thesis
+AAPL is transitioning from hardware to services-led growth. The market underestimates the durability of Services margins (>70%) and overestimates iPhone cycle risk. At 28x forward earnings, it's not cheap but the compounding quality justifies it in this regime.
+
+### What the Market Is Missing
+Services revenue growing at 15%+ with 70%+ gross margins, now representing 25% of total revenue — the multiple should expand as this mix becomes visible.
+
+### Key Evidence
+- Services grew 14.2% YoY to $24.2B, with 74.6% gross margin (+240bps)
+- iPhone revenue flat YoY but ASP up 5% — volume weakness offset by pricing power
+- $110B buyback authorized — management signal of undervaluation
+- Vision Pro just starting; enterprise adoption early but promising
+
+### The Opposing Case
+China competition is real (Huawei resurgence), iPhone upgrade cycle is the longest ever, and the AI integration story is behind Android competitors. Services growth will eventually decelerate as the installed base matures.
+
+### What Would Change My Mind
+China revenue down >15% YoY in two consecutive quarters, OR Services growth falls below 10% — either triggers downgrade to HOLD.
+
+### Decision
+- **VERDICT**: BUY
+- **CONVICTION**: Medium (7/10)
+- **TIME HORIZON**: 12-18 months
+- **ENTRY**: $185 | **STOP**: $165 (-11%) | **TARGET**: $220 (+19%)
+- **KEY RISK**: China regulatory/competitive pressure on hardware
+
+### Scenario Probabilities
+| Scenario | Probability | Target | Catalyst |
+|----------|-------------|--------|----------|
+| Bull | 25% | $240 (+30%) | AI hardware cycle, Services acceleration |
+| Base | 55% | $220 (+19%) | Steady growth, multiple holds |
+| Bear | 15% | $170 (-8%) | China weakness, margin compression |
+| Black Swan | 5% | $140 (-24%) | Regulatory action, pandemic-style demand collapse |
+
+Expected Value: +15.3%
+
+### Monitoring Triggers
+- Services growth <12% YoY → reassess
+- China revenue down >10% → downgrade to HOLD
+- Stock breaks below $165 → stop-loss triggers
+```
+
+**Every analysis follows this structure. Thesis first, then evidence, then decision.**
+
+---
+
+
 
 Most quant skills run scripts and average the signals. This one **thinks first**.
 
@@ -106,7 +162,7 @@ All scripts use `datetime.now()` — no hardcoded dates. All backtests enforce *
 
 ---
 
-## Reference Library (19 Files)
+## Reference Library (21 Files)
 
 The skill includes a deep reference library organized by purpose:
 
@@ -144,19 +200,19 @@ The skill includes a deep reference library organized by purpose:
 Copy-paste this prompt into **any AI agent** (OpenCode, kilo code, Codex, etc.) to install the skill:
 
 ```
-Clone the deep-market-analysis skill from https://github.com/Timmy6942025/deep-market-analysis and set it up in my .agents directory so it works immediately.
+Clone the edge-hunter skill from https://github.com/Timmy6942025/edge-hunter and set it up in my .agents directory so it works immediately.
 
 Steps:
-1. git clone https://github.com/Timmy6942025/deep-market-analysis.git ~/.agents/skills/deep-market-analysis
+1. git clone https://github.com/Timmy6942025/edge-hunter.git ~/.agents/skills/edge-hunter
 2. pip3 install --break-system-packages yfinance vectorbt prophet PyPortfolioOpt numpy pandas ruff
-3. Confirm the skill is installed by checking if ~/.agents/skills/deep-market-analysis/SKILL.md exists.
+3. Confirm the skill is installed by checking if ~/.agents/skills/edge-hunter/SKILL.md exists.
 
 Then tell me "Skill installed. Ready for deep market analysis."
 ```
 
 **OpenCode users** can also run:
 ```bash
-opencode install deep-market-analysis
+opencode install edge-hunter
 ```
 
 ---
@@ -166,13 +222,13 @@ opencode install deep-market-analysis
 When you make changes to the repo, users can update with one command:
 ```bash
 # Option 1: Run the update script (easiest)
-~/.agents/skills/deep-market-analysis/update-skill.sh
+~/.agents/skills/edge-hunter/update-skill.sh
 
 # Option 2: Direct git pull
-cd ~/.agents/skills/deep-market-analysis && git pull
+cd ~/.agents/skills/edge-hunter && git pull
 
 # Option 3: Re-install fresh (if issues)
-git clone https://github.com/Timmy6942025/deep-market-analysis.git ~/.agents/skills/deep-market-analysis --force
+git clone https://github.com/Timmy6942025/edge-hunter.git ~/.agents/skills/edge-hunter --force
 ```
 
 ---
@@ -203,7 +259,7 @@ All scripts pass `ruff` linting and formatting with a security-focused configura
 
 ```bash
 # Check for lint issues
-cd ~/.agents/skills/deep-market-analysis && ruff check scripts/
+cd ~/.agents/skills/edge-hunter && ruff check scripts/
 
 # Auto-fix trivial lint issues
 ruff check scripts/ --fix
@@ -221,4 +277,4 @@ A **CI workflow** (`.github/workflows/lint.yml`) runs `ruff check`, `ruff format
 
 ## Repository
 
-https://github.com/Timmy6942025/deep-market-analysis
+https://github.com/Timmy6942025/edge-hunter

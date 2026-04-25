@@ -1,0 +1,18 @@
+# edge-hunter skill dependencies
+# Tested on Python 3.10+
+# Install: pip3 install --break-system-packages -r requirements.txt
+# These versions are tested and known to work together
+
+yfinance>=0.2.36
+vectorbt>=0.5.10
+prophet>=1.1.5
+PyPortfolioOpt>=1.5.5
+numpy>=1.26.0
+pandas>=2.0.0
+scipy>=1.12.0
+cvxpy>=1.5.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+ruff>=0.2.0
+pytest>=8.0.0

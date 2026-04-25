@@ -39,7 +39,7 @@ def analyze_macro_environment(ticker="SPY"):
     try:
         vix = extract_price_data(yf.download("^VIX", start=one_year_ago, end=today_str, progress=False), "Close")
         current_vix = float(vix.iloc[-1])
-        avg_vix = float(vix.mean())
+        avg_vix = float(vix.mean().item())
 
         print(f"  Current VIX: {current_vix:.1f}")
         print(f"  1-Year Average: {avg_vix:.1f}")

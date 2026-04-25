@@ -1,4 +1,4 @@
-# Ruff linting configuration for deep-market-analysis scripts
+# Ruff linting configuration for edge-hunter scripts
 # Focus: security, exception handling, subprocess safety
 
 # Target Python 3.10+
