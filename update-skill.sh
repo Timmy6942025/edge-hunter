@@ -10,7 +10,7 @@ echo "🔄 Updating edge-hunter skill..."
 
 cd "$SKILL_DIR" 2>/dev/null || {
     echo "❌ Error: Skill not found at $SKILL_DIR"
-    echo "Run this first: git clone https://github.com/Timmy6942025/professional-quant.git ~/.agents/skills/edge-hunter"
+    echo "Run this first: git clone https://github.com/Timmy6942025/edge-hunter.git ~/.agents/skills/edge-hunter"
     exit 1
 }
 

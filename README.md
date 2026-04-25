@@ -200,10 +200,10 @@ The skill includes a deep reference library organized by purpose:
 Copy-paste this prompt into **any AI agent** (OpenCode, kilo code, Codex, etc.) to install the skill:
 
 ```
-Clone the edge-hunter skill from https://github.com/Timmy6942025/professional-quant and set it up in my .agents directory so it works immediately.
+Clone the edge-hunter skill from https://github.com/Timmy6942025/edge-hunter and set it up in my .agents directory so it works immediately.
 
 Steps:
-1. git clone https://github.com/Timmy6942025/professional-quant.git ~/.agents/skills/edge-hunter
+1. git clone https://github.com/Timmy6942025/edge-hunter.git ~/.agents/skills/edge-hunter
 2. pip install yfinance vectorbt prophet PyPortfolioOpt numpy pandas ruff  (use --break-system-packages on some systems if needed)
 3. Confirm the skill is installed by checking if ~/.agents/skills/edge-hunter/SKILL.md exists.
 
@@ -228,7 +228,7 @@ When you make changes to the repo, users can update with one command:
 cd ~/.agents/skills/edge-hunter && git pull
 
 # Option 3: Re-install fresh (if issues)
-git clone https://github.com/Timmy6942025/professional-quant.git ~/.agents/skills/edge-hunter --force
+git clone https://github.com/Timmy6942025/edge-hunter.git ~/.agents/skills/edge-hunter --force
 ```
 
 ---
@@ -277,4 +277,4 @@ A **CI workflow** (`.github/workflows/lint.yml`) runs `ruff check`, `ruff format
 
 ## Repository
 
-https://github.com/Timmy6942025/professional-quant
+https://github.com/Timmy6942025/edge-hunter
