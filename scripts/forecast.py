@@ -9,7 +9,12 @@ Let master_analysis.py synthesize the recommendation.
 import pandas as pd
 import numpy as np
 import yfinance as yf
-from prophet import Prophet
+
+try:
+    from prophet import Prophet
+except ImportError:
+    Prophet = None
+
 import argparse
 import re
 import sys
@@ -84,6 +89,8 @@ def forecast_stock(ticker, periods=30):
     validate_df = prophet_df[-holdout_days:].copy()
 
     # Prophet model with reasonable parameters
+    if Prophet is None:
+        raise ImportError("prophet package is required for forecasting. Install with: pip install prophet")
     model = Prophet(
         changepoint_prior_scale=0.05,
         seasonality_prior_scale=10,

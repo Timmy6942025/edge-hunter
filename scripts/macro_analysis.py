@@ -38,8 +38,8 @@ def analyze_macro_environment(ticker="SPY"):
     print(f"\nVOLATILITY REGIME (VIX):")
     try:
         vix = extract_price_data(yf.download("^VIX", start=one_year_ago, end=today_str, progress=False), "Close")
-        current_vix = float(vix.iloc[-1])
-        avg_vix = float(vix.mean().item())
+        current_vix = vix.iloc[-1].item()
+        avg_vix = vix.mean().item()
 
         print(f"  Current VIX: {current_vix:.1f}")
         print(f"  1-Year Average: {avg_vix:.1f}")
@@ -70,8 +70,8 @@ def analyze_macro_environment(ticker="SPY"):
         tlt_returns = tlt.pct_change().dropna()
 
         # Bond prices DOWN = rates UP (negative correlation)
-        tlt_1m = float(tlt.pct_change(20).iloc[-1] * 100)
-        tlt_3m = float(tlt.pct_change(60).iloc[-1] * 100)
+        tlt_1m = (tlt.pct_change(20).iloc[-1] * 100).item()
+        tlt_3m = (tlt.pct_change(60).iloc[-1] * 100).item()
 
         print(f"  TLT 1-Month Change: {tlt_1m:+.2f}%")
         print(f"  TLT 3-Month Change: {tlt_3m:+.2f}%")
@@ -95,7 +95,7 @@ def analyze_macro_environment(ticker="SPY"):
     print(f"\nDOLLAR STRENGTH (UUP):")
     try:
         uup = extract_price_data(yf.download("UUP", start=one_year_ago, end=today_str, progress=False), "Close")
-        uup_3m = float(uup.pct_change(60).iloc[-1] * 100)
+        uup_3m = (uup.pct_change(60).iloc[-1] * 100).item()
 
         print(f"  UUP 3-Month Change: {uup_3m:+.2f}%")
 
@@ -114,7 +114,7 @@ def analyze_macro_environment(ticker="SPY"):
     print(f"\nINFLATION HEDGE (GLD - Gold):")
     try:
         gld = extract_price_data(yf.download("GLD", start=one_year_ago, end=today_str, progress=False), "Close")
-        gld_3m = float(gld.pct_change(60).iloc[-1] * 100)
+        gld_3m = (gld.pct_change(60).iloc[-1] * 100).item()
 
         print(f"  GLD 3-Month Change: {gld_3m:+.2f}%")
 
@@ -133,7 +133,7 @@ def analyze_macro_environment(ticker="SPY"):
     print(f"\nCREDIT RISK (HYG - High Yield Bonds):")
     try:
         hyg = extract_price_data(yf.download("HYG", start=one_year_ago, end=today_str, progress=False), "Close")
-        hyg_3m = float(hyg.pct_change(60).iloc[-1] * 100)
+        hyg_3m = (hyg.pct_change(60).iloc[-1] * 100).item()
 
         print(f"  HYG 3-Month Change: {hyg_3m:+.2f}%")
 

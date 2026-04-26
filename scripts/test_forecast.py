@@ -9,7 +9,15 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from forecast import validate_ticker, calculate_technical_indicators, forecast_stock
+from forecast import validate_ticker, calculate_technical_indicators
+
+try:
+    from forecast import forecast_stock
+
+    _HAS_PROPHET = True
+except ImportError:
+    _HAS_PROPHET = False
+    forecast_stock = None
 
 
 class TestValidateTicker:
@@ -95,6 +103,9 @@ class TestCalculateTechnicalIndicators:
 
 
 class TestForecastStock:
+    skip_no_prophet = pytest.mark.skipif(not _HAS_PROPHET, reason="prophet not installed")
+
+    @skip_no_prophet
     def test_returns_dict(self):
         """forecast_stock returns a dictionary."""
         try:
@@ -103,6 +114,7 @@ class TestForecastStock:
         except Exception:
             pytest.skip("yfinance API unavailable or Prophet error")
 
+    @skip_no_prophet
     def test_dict_contains_keys(self):
         """Result dict contains expected keys."""
         try:
@@ -111,6 +123,7 @@ class TestForecastStock:
         except Exception:
             pytest.skip("yfinance API unavailable")
 
+    @skip_no_prophet
     def test_invalid_ticker_raises(self):
         """Invalid ticker raises exception."""
         with pytest.raises(Exception):
